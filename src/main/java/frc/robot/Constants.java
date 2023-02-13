@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.crypto.KeyAgreementSpi;
-
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -41,10 +39,10 @@ public final class Constants {
 
   public static final class MeasurementConstants {
     // This is based on the CAD model (divided by two to represent distance from center of robot) 
-    public static final double kModuleXOffsetMeters = 0.629 / 2; // 24.75 inches - distance between left and right wheels
-    public static final double kModuleYOffsetMeters = 0.629 / 2; // 24.75 inches - distance between front and back wheels
-    public static final double kWheelDiameterMeters = 0.10033; // 4 inches - diameter of the wheels
     public static final double kInchesToMeters = 39.37;
+    public static final double kModuleXOffsetMeters = 21.5 / kInchesToMeters / 2; // 21.5 inches - distance between left and right wheels
+    public static final double kModuleYOffsetMeters = 18.5 / kInchesToMeters / 2; // 18.5 inches - distance between front and back wheels
+    public static final double kWheelDiameterMeters = 0.10033; // 4 inches - diameter of the wheels
 
     public static final double kCameraOffsetX = 15 / kInchesToMeters;
     public static final double kCameraOffsetY = 0;
@@ -53,18 +51,23 @@ public final class Constants {
     public static final double kHybridNodeDepth = 16 / kInchesToMeters;
     public static final double kNodeOffset = 20.25 / kInchesToMeters;
 
-    public static final double kFrontLeftEncoderOffset = 165; // Must be degrees
-    public static final double kBackLeftEncoderOffset = 119.62;//122// Must be degrees
-    public static final double kFrontRightEncoderOffset = 96.33;//96.5 // Must be degrees
-    public static final double kBackRightEncoderOffset = 258.4;//260 // Must be degrees
+    public static final double kFrontLeftEncoderOffset = 86.1;
+    public static final double kBackLeftEncoderOffset = 179;//122// Must be degrees
+    public static final double kFrontRightEncoderOffset = 269.12;//96.5 // Must be degrees
+    public static final double kBackRightEncoderOffset = 27.8;//260 // Must be degrees
 
-    public static final double kElbowEncoderOffset = 1.0; // FIND THIS
-    public static final double kShoulderEncoderOffset = 1.0; // FIND THIS
+    // public static final double kFrontLeftEncoderOffset = 89; // Must be degrees
+    // public static final double kBackLeftEncoderOffset = 117.8;//122// Must be degrees
+    // public static final double kFrontRightEncoderOffset = 266.1;//96.5 // Must be degrees
+    // public static final double kBackRightEncoderOffset = 89.12;//260 // Must be degrees
+
+    public static final double kShoulderEncoderOffset = 141; // FIND THIS
+    public static final double kElbowEncoderOffset = 267.5; // FIND THIS
 
     public static final double kMaxSpeedMetersPerSecond = 5880 / 60.0 *
       SwerveModuleConstants.kDriveReduction *
       MeasurementConstants.kWheelDiameterMeters * Math.PI; // ~ 4.6 m/s
-      public static final double kMaxAccelerationMetersPerSecondSquared = kMaxSpeedMetersPerSecond / 60;
+      public static final double kMaxAccelerationMetersPerSecondSquared = 10;
     public static final double kMaxAngularSpeedRadiansPerSecond = kMaxSpeedMetersPerSecond /
       Math.hypot(kModuleXOffsetMeters / 2.0, kModuleYOffsetMeters / 2.0);
   }
@@ -76,7 +79,7 @@ public final class Constants {
   }
 
   public static final class SwerveModuleConstants {
-    public static final double kSpeedMultiplier = 0.5; // limits robot speed
+    public static final double kSpeedMultiplier = 1.0; // limits robot speed
     public static final double kDriveDeadband = 0.1;
 
     public static final double kMaxVoltage = 12.0;
@@ -115,12 +118,15 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final double kShoulderMaxAngle = 130; //degrees
-    public static final double kElbowMaxAngle = 315; //degrees
-    public static final double kShoulderMinAngle = 40; //degrees
-    public static final double kElbowMinAngle = 45; //degrees
+    public static final double kShoulderMaxAngle = 45; //degrees
+    public static final double kElbowMaxAngle = 130; //degrees
+
+
+    public static final double kShoulderMaxSpeed = 0.25;
+    public static final double kElbowMaxSpeed = 0.2;
+
     public static final class PID {
-      public static final double kShoulderP = 0.01;
+      public static final double kShoulderP = 0.00428;
       public static final double kShoulderI = 0.00;
       public static final double kShoulderD = 0.00;
       public static final double kElbowP = 0.01;
@@ -131,23 +137,31 @@ public final class Constants {
 
 
   public static final class CANConstants {
-    public static final int kFrontLeftDriveMotorID = 1;
-    public static final int kBackLeftDriveMotorID = 2;
-    public static final int kFrontRightDriveMotorID = 3;
-    public static final int kBackRightDriveMotorID = 4;
+    public static final int kFrontLeftDriveMotorID = 3;
+    public static final int kBackLeftDriveMotorID = 1;
+    public static final int kFrontRightDriveMotorID = 4;
+    public static final int kBackRightDriveMotorID = 2;
 
-    public static final int kFrontLeftSteerMotorID = 5;
-    public static final int kBackLeftSteerMotorID = 6;
-    public static final int kFrontRightSteerMotorID = 7;
-    public static final int kBackRightSteerMotorID = 8;
+    public static final int kFrontLeftSteerMotorID = 7;
+    public static final int kBackLeftSteerMotorID = 5;
+    public static final int kFrontRightSteerMotorID = 8;
+    public static final int kBackRightSteerMotorID = 6;
 
     public static final int kFrontLeftEncoderID = 9;
-    public static final int kBackLeftEncoderID = 10;
+    public static final int kBackLeftEncoderID = 12;
     public static final int kFrontRightEncoderID = 11;
-    public static final int kBackRightEncoderID = 12;
+    public static final int kBackRightEncoderID = 10;
 
-    public static final int kElbowEncoderID = 13;
-    public static final int kShoulderEncoderID = 14;
+    public static final int kElbowEncoderID = 14;
+    public static final int kShoulderEncoderID = 13;
+
+    public static final int kLeftShoulderMotorID = 17;
+    public static final int kRightShoulderMotorID = 18;
+    public static final int kLeftElbowMotorID = 15;
+    public static final int kRightElbowMotorID = 16;
+
+    public static final int kLeftCollectorMotorID = 21;
+    public static final int kRightCollectorMotorID = 22;
 
 
     public static final double kEncoderResolution = 4096;

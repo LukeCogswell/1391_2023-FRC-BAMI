@@ -232,9 +232,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("pipeline", getPIP());
-    SmartDashboard.putNumber("botposeLength", botPoseSub.get().length);
-    SmartDashboard.putNumber("BotPose", botPoseSub.get().length);
     updateOdometry();
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
   }

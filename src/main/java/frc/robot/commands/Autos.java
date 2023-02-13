@@ -35,7 +35,7 @@ public final class Autos {
   public static CommandBase ThreeGPBalanceNonCC(Drivetrain drivetrain, LEDs LEDs) {
     Constants.AUTO_EVENT_MAP.put("Cube", new InstantCommand(() -> LEDs.setLEDS(Color.kPurple)));
     Constants.AUTO_EVENT_MAP.put("Cone", new InstantCommand(() -> LEDs.setLEDS(Color.kYellow)));
-    Constants.AUTO_EVENT_MAP.put("UpdateOdometry", new InstantCommand(() -> drivetrain.updateOdometryIfTag()));
+    // Constants.AUTO_EVENT_MAP.put("UpdateOdometry", new InstantCommand(() -> drivetrain.updateOdometryIfTag()));
     List<PathPlannerTrajectory> AutoPaths;
     if (DriverStation.getAlliance() == Alliance.Red) {
       AutoPaths =
@@ -81,7 +81,7 @@ public final class Autos {
   public static CommandBase TwoGPBalanceCC(Drivetrain drivetrain, LEDs LEDs) {
     Constants.AUTO_EVENT_MAP.put("Cube", new InstantCommand(() -> LEDs.setLEDS(Color.kPurple)));
     Constants.AUTO_EVENT_MAP.put("Cone", new InstantCommand(() -> LEDs.setLEDS(Color.kYellow)));
-    Constants.AUTO_EVENT_MAP.put("UpdateOdometry", new InstantCommand(() -> drivetrain.updateOdometryIfTag()));
+    // Constants.AUTO_EVENT_MAP.put("UpdateOdometry", new InstantCommand(() -> drivetrain.updateOdometryIfTag()));
     List<PathPlannerTrajectory> AutoPaths;
     if (DriverStation.getAlliance() == Alliance.Red) {
       AutoPaths =

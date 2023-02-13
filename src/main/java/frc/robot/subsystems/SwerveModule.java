@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.SwerveModuleConstants.*;
 import static frc.robot.Constants.SwerveModuleConstants.PID.*;
@@ -57,7 +58,7 @@ public class SwerveModule extends SubsystemBase {
 
     setMotorSettings(m_driveMotor, kDriveMotorCurrentLimit);
     setMotorSettings(m_steerMotor, kSteerMotorCurrentLimit);
-    m_driveMotor.setOpenLoopRampRate(0.4);
+    m_driveMotor.setOpenLoopRampRate(0);
 
     m_driveRelativeEncoder.setPositionConversionFactor(kDriveEncoderPositionConversionFactor); // Gives meters
     m_driveRelativeEncoder.setVelocityConversionFactor(kDriveEncoderPositionConversionFactor / 60.0); // Gives meters per second
@@ -81,6 +82,7 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
+  SmartDashboard.putNumber("Encoder " + m_steerEncoder.getDeviceID(), m_steerEncoder.getAbsolutePosition());
     // This method will be called once per scheduler run
   }
 

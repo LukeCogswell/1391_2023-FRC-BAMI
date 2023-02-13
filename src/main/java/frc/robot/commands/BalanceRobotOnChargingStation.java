@@ -40,8 +40,8 @@ public class BalanceRobotOnChargingStation extends CommandBase {
     pitch = MathUtil.clamp(pitch, -kSpeedLimit, kSpeedLimit);
     roll = MathUtil.clamp(roll, -kSpeedLimit, kSpeedLimit);
     m_swerveDrive.drive(
-      pitch,
       roll,
+      pitch,
       0,
       false
       );

@@ -4,35 +4,41 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.CANConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
-  public CANSparkMax elbowMotor = new CANSparkMax(9, MotorType.kBrushless);
-  private CANSparkMax lShoulderMotor = new CANSparkMax(10, MotorType.kBrushless);
-  private CANSparkMax rShoulderMotor = new CANSparkMax(11, MotorType.kBrushless);
-  private CANCoder elbowEncoder = new CANCoder(kElbowEncoderID);
-  private CANCoder shoulderEncoder = new CANCoder(kShoulderEncoderID);
+  public CANSparkMax lElbowMotor = new CANSparkMax(kLeftElbowMotorID, MotorType.kBrushless);
+  private CANSparkMax rElbowMotor = new CANSparkMax(kRightElbowMotorID, MotorType.kBrushless);
+  private CANSparkMax lShoulderMotor = new CANSparkMax(kLeftShoulderMotorID, MotorType.kBrushless);
+  private CANSparkMax rShoulderMotor = new CANSparkMax(kRightShoulderMotorID, MotorType.kBrushless);
+  private DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(1);
+  private DutyCycleEncoder shoulderEncoder = new DutyCycleEncoder(0);
   /** Creates a new Arm. */
   public Arm() {
-    lShoulderMotor.setInverted(true);
-    rShoulderMotor.setInverted(false);
+    lShoulderMotor.setInverted(false);
+    rShoulderMotor.setInverted(true);
+    rElbowMotor.setInverted(false);
+    lElbowMotor.setInverted(true);
   }
 
   @Override
   public void periodic() {
-    System.out.println(elbowEncoder.getAbsolutePosition());
-    System.out.println(shoulderEncoder.getAbsolutePosition());
+    SmartDashboard.putNumber( "ElbowAngle", getElbowAngle());
+    SmartDashboard.putNumber( "ShoulderAngle", getShoulderAngle());
+    
     // This method will be called once per scheduler run
   }
 
-  public void setElbowMotor(Double speed) {
-    elbowMotor.set(speed);
+  public void setElbowMotors(Double speed) {
+    lElbowMotor.set(speed);
+    rElbowMotor.set(speed);
   }
 
   public void setShoulderMotors(Double speed) {
@@ -45,6 +51,6 @@ public class Arm extends SubsystemBase {
   }
   
   public double getShoulderAngle() {
-    return shoulderEncoder.getAbsolutePosition() - kShoulderEncoderOffset;
+    return -(shoulderEncoder.getAbsolutePosition() - kShoulderEncoderOffset);
   }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
@@ -22,6 +23,12 @@ public class ArmToPos extends CommandBase {
     m_arm = arm;
     targetShoulderAngle = shoulderAngle;
     targetElbowAngle = elbowAngle;
+    if (Math.abs(targetElbowAngle) > 160) {
+      targetElbowAngle = 0.0;
+    } 
+    if (Math.abs(targetShoulderAngle) > 45) {
+      targetShoulderAngle = 0.0;
+    } 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
   }
@@ -37,24 +44,23 @@ public class ArmToPos extends CommandBase {
   @Override
   public void execute() {
     var elbowSpeed = elbowController.calculate(m_arm.getElbowAngle());
-
-
+    var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
+    elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
+    shoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);
+    m_arm.setElbowMotors(elbowSpeed);
+    m_arm.setShoulderMotors(-shoulderSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_arm.setElbowMotor(0.0);
+    m_arm.setElbowMotors(0.0);
     m_arm.setShoulderMotors(0.0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (shoulderController.atSetpoint() && elbowController.atSetpoint()) {
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 }
