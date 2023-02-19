@@ -82,7 +82,7 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-  SmartDashboard.putNumber("Encoder " + m_steerEncoder.getDeviceID(), m_steerEncoder.getAbsolutePosition());
+  // SmartDashboard.putNumber("Encoder " + m_steerEncoder.getDeviceID(), m_steerEncoder.getAbsolutePosition());
     // This method will be called once per scheduler run
   }
 

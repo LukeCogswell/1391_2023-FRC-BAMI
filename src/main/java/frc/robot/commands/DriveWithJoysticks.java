@@ -77,13 +77,13 @@ public class DriveWithJoysticks extends CommandBase {
       m_PIDcontrol = false;
     }
 
-    m_precisionFactor = Math.pow(0.4, m_precision.getAsDouble());
+    m_precisionFactor = 1 - Math.pow(2, m_precision.getAsDouble());
     m_xSpeed =
-      -m_xLimiter.calculate(MathUtil.applyDeadband(m_y.getAsDouble(), kDriveDeadband))
+      -m_xLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_y.getAsDouble(), 2) * Math.signum(m_y.getAsDouble()), kDriveDeadband))
       * kMaxSpeedMetersPerSecond * kSpeedMultiplier * m_precisionFactor;
     
     m_ySpeed =
-      -m_yLimiter.calculate(MathUtil.applyDeadband(m_x.getAsDouble(), kDriveDeadband))
+      -m_yLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_x.getAsDouble(), 2) * Math.signum(m_x.getAsDouble()), kDriveDeadband))
       * kMaxSpeedMetersPerSecond * kSpeedMultiplier * m_precisionFactor;
 
     if (DriverStation.getAlliance() == Alliance.Blue) {
@@ -99,7 +99,7 @@ public class DriveWithJoysticks extends CommandBase {
     } else {
       // Joystick control
       m_thetaSpeed =
-        -m_thetaLimiter.calculate(MathUtil.applyDeadband(m_theta.getAsDouble(), kDriveDeadband))
+        -m_thetaLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_theta.getAsDouble(), 2) * Math.signum(m_theta.getAsDouble()), kDriveDeadband))
         * kMaxAngularSpeedRadiansPerSecond * kSpeedMultiplier * m_precisionFactor;
     }
 

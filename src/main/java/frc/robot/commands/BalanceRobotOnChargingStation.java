@@ -31,8 +31,8 @@ public class BalanceRobotOnChargingStation extends CommandBase {
   @Override
   public void execute() {
     var strength = adjustmentStrength.getAsDouble() * kTriggerMultiplier;
-    var pitch = m_swerveDrive.getNavxPitch();
-    var roll = -m_swerveDrive.getNavxRoll();
+    var pitch = -m_swerveDrive.getNavxPitch();
+    var roll = m_swerveDrive.getNavxRoll();
     SmartDashboard.putNumber("Pitch", pitch);
     SmartDashboard.putNumber("Roll", roll);
     pitch = -kAngleTolerance > pitch || pitch > kAngleTolerance ? pitch * strength: 0;

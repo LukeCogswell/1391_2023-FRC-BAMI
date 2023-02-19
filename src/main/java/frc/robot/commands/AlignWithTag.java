@@ -12,10 +12,9 @@ import frc.robot.subsystems.Drivetrain;
 import static frc.robot.Constants.MeasurementConstants.*;
 import static frc.robot.Constants.SwerveModuleConstants.PID.*;
 
-public class AlignWithNode extends CommandBase {
+public class AlignWithTag extends CommandBase {
   private Drivetrain m_drivetrain;
   private Integer node;
-  private double targetYPos;
   private PIDController yController = new PIDController(kDriveP, kDriveI, kDriveD);
   private PIDController xController = new PIDController(kDriveP, kDriveI, kDriveD);
   private PIDController turnController = new PIDController(0.05, kSteerI, kSteerD);
@@ -27,7 +26,7 @@ public class AlignWithNode extends CommandBase {
    * @param whichNode - the desired node to travel to. 
    * Integer values of 1, 2 and 3 are applicable, with 1 and 2 being cone nodes.
    */
-  public AlignWithNode(Drivetrain drivetrain, Integer whichNode) {
+  public AlignWithTag(Drivetrain drivetrain, Integer whichNode) {
     node = whichNode;
     m_drivetrain = drivetrain;
 
@@ -60,48 +59,17 @@ public class AlignWithNode extends CommandBase {
     }
 
     var tagID = m_drivetrain.getTID();
-    var tagPose = Constants.AprilTagFieldLayouts.AprilTagList.get(tagID - 1).pose;
-    // var offsetY = getYOffset();
-    var offsetY = 0.0;
+
 
     if (tagID < 5) {
       xController.setSetpoint(15);
       turnController.setSetpoint(0);
-      if (node == 1 ) {
-        offsetY = -kNodeOffset; 
-      } else if (node == 3) {
-        offsetY = kNodeOffset;
-      }
-      targetYPos = tagPose.getY() + offsetY;
     } else {
       xController.setSetpoint(2);
       turnController.setSetpoint(180);
-      if (node == 3 ) {
-        offsetY = -kNodeOffset; 
-      } else if (node == 1) {
-        offsetY = kNodeOffset;
-      }
-      targetYPos = tagPose.getY() - offsetY;
     }
-    yController.setSetpoint(targetYPos);
+    yController.setSetpoint(0.0);
   }
-
-  // private double getYOffset() {
-  //   switch (node) {
-  //     case 1:
-  //       return kNodeOffset;
-      
-  //     case 2:
-  //       return 0.0;
-
-  //     case 3:
-  //       return -kNodeOffset;
-
-  //     default:
-  //       return 0.0;
-  //   }
-    
-  // }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -112,12 +80,11 @@ public class AlignWithNode extends CommandBase {
     // }
     
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
-    var yDrive = yController.calculate(m_drivetrain.getFieldPosition().getY());
+    var yDrive = -yController.calculate(m_drivetrain.getTX());
     var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getRadians());
     rot = MathUtil.clamp(rot, -1, 1);
     xDrive = MathUtil.clamp(xDrive, -1.4, 1.4);
     yDrive = MathUtil.clamp(yDrive, -1.4, 1.4);
-
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }
 

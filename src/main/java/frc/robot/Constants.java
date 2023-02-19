@@ -61,8 +61,8 @@ public final class Constants {
     // public static final double kFrontRightEncoderOffset = 266.1;//96.5 // Must be degrees
     // public static final double kBackRightEncoderOffset = 89.12;//260 // Must be degrees
 
-    public static final double kShoulderEncoderOffset = 141; // FIND THIS
-    public static final double kElbowEncoderOffset = 267.5; // FIND THIS
+    public static final double kShoulderEncoderOffset = 345.8; // FIND THIS
+    public static final double kElbowEncoderOffset = -46.7; // FIND THIS
 
     public static final double kMaxSpeedMetersPerSecond = 5880 / 60.0 *
       SwerveModuleConstants.kDriveReduction *
@@ -79,8 +79,8 @@ public final class Constants {
   }
 
   public static final class SwerveModuleConstants {
-    public static final double kSpeedMultiplier = 1.0; // limits robot speed
-    public static final double kDriveDeadband = 0.1;
+    public static final double kSpeedMultiplier = 0.8; // limits robot speed
+    public static final double kDriveDeadband = 0.05;
 
     public static final double kMaxVoltage = 12.0;
     public static final double kAccelerationSeconds = 0.5; // 0.5 seconds to reach full speed
@@ -122,16 +122,17 @@ public final class Constants {
     public static final double kElbowMaxAngle = 130; //degrees
 
 
-    public static final double kShoulderMaxSpeed = 0.25;
-    public static final double kElbowMaxSpeed = 0.2;
+    public static final double kShoulderMaxSpeed = 0.15;
+    public static final double kElbowMaxSpeed = 0.3;
 
     public static final class PID {
-      public static final double kShoulderP = 0.00428;
-      public static final double kShoulderI = 0.00;
-      public static final double kShoulderD = 0.00;
-      public static final double kElbowP = 0.01;
-      public static final double kElbowI = 0.00;
-      public static final double kElbowD = 0.00;
+      public static final double kShoulderP = 0.016;
+      public static final double kShoulderI = 0.016;
+      public static final double kShoulderD = 0.00001;
+
+      public static final double kElbowP = 0.014;
+      public static final double kElbowI = 0.0015;
+      public static final double kElbowD = 0.000;// 0.0005 had oscillations
     }
   }
 
@@ -157,11 +158,11 @@ public final class Constants {
 
     public static final int kLeftShoulderMotorID = 17;
     public static final int kRightShoulderMotorID = 18;
-    public static final int kLeftElbowMotorID = 15;
-    public static final int kRightElbowMotorID = 16;
+    public static final int kLeftElbowMotorID = 19;
+    public static final int kRightElbowMotorID = 20;
 
-    public static final int kLeftCollectorMotorID = 21;
-    public static final int kRightCollectorMotorID = 22;
+    public static final int kLeftCollectorMotorID = 16;
+    public static final int kRightCollectorMotorID = 15;
 
 
     public static final double kEncoderResolution = 4096;

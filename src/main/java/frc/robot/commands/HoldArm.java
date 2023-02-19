@@ -11,20 +11,15 @@ import frc.robot.subsystems.Arm;
 import static frc.robot.Constants.ArmConstants.PID.*;
 import static frc.robot.Constants.ArmConstants.*;
 
-public class ArmToPos extends CommandBase {
-  private Arm m_arm;
-  private Double targetShoulderAngle, targetElbowAngle;
-
+public class HoldArm extends CommandBase {
+  Arm m_arm;
   private PIDController shoulderController = new PIDController(kShoulderP, kShoulderI, kShoulderD);
   private PIDController elbowController = new PIDController(kElbowP, kElbowI, kElbowD);
-
-  /** Creates a new ArmToAngle. */
-  public ArmToPos(Arm arm, Double shoulderAngle, Double elbowAngle) {
+  /** Creates a new HoldArm. */
+  public HoldArm(Arm arm) {
     m_arm = arm;
-    targetElbowAngle = elbowAngle > 155 || elbowAngle < -155 ? 0.0: elbowAngle;
-    targetShoulderAngle = shoulderAngle > 45 || shoulderAngle < -45 ? 0.0: shoulderAngle;
+    addRequirements(arm);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_arm);
   }
 
   // Called when the command is initially scheduled.
@@ -32,10 +27,10 @@ public class ArmToPos extends CommandBase {
   public void initialize() {
     shoulderController.reset();
     elbowController.reset();
-    elbowController.setSetpoint(targetElbowAngle);
-    shoulderController.setSetpoint(targetShoulderAngle);
-    elbowController.setTolerance(0.5);
-    shoulderController.setTolerance(0.5);
+    elbowController.setSetpoint( m_arm.getElbowAngle());
+    shoulderController.setSetpoint(m_arm.getShoulderAngle());
+    elbowController.enableContinuousInput(-180.0, 180.0);
+    shoulderController.enableContinuousInput(-180.0, 180.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,16 +49,12 @@ public class ArmToPos extends CommandBase {
   public void end(boolean interrupted) {
     m_arm.setElbowMotors(0.0);
     m_arm.setShoulderMotors(0.0);
-    shoulderController.close();
-    elbowController.close();
+    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if (shoulderController.atSetpoint() && elbowController.atSetpoint()) {
-    //   return true;
-    // }
     return false;
   }
 }
