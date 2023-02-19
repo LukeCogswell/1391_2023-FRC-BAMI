@@ -6,7 +6,7 @@ package frc.robot;
 
 import static frc.robot.Constants.OIConstants.*;
 
-import frc.robot.commands.ArmToPos;
+import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.Autos;
 // import frc.robot.commands.BalanceRobotOnChargingStation;
 import frc.robot.commands.DriveWithJoysticks;
@@ -109,7 +109,7 @@ public class RobotContainer {
 
     // m_driverController.leftTrigger().whileTrue(new BalanceRobotOnChargingStation(m_drivetrain, () -> m_driverController.getLeftTriggerAxis()));
     
-    
+    // button1.onTrue(new InstantCommand(() -> {}, m_arm)); // removes operator control of arm
     /*************ARM CONTROL*****************/
     m_driverController.a().onTrue(new InstantCommand(() -> {m_arm.GrabGp(true);}));
     m_driverController.b().onTrue(new InstantCommand(() -> {m_arm.GrabGp(false);}));
@@ -121,12 +121,13 @@ public class RobotContainer {
       // ^^^moves arm to position to grab from the collector on the floor
     
     
-
-    povUpTrigger.whileTrue(new ArmToPos(m_arm, 36.0, 152.0));
-    povRightTrigger.whileTrue(new ArmToPos(m_arm, 8.3, 94.0));
-    povLeftTrigger.whileTrue(new ArmToPos(m_arm, -36.9, -31.0));
-    povDownTrigger.whileTrue(new ArmToPos(m_arm, 0.0, 0.0));
     
+    // povUpTrigger.whileTrue(new ArmToAngles(m_arm, 36.0, 152.0));
+    // povRightTrigger.whileTrue(new ArmToAngles(m_arm, 8.3, 94.0));
+    // povLeftTrigger.whileTrue(new ArmToAngles(m_arm, -36.9, -31.0));
+    // povDownTrigger.whileTrue(new ArmToAngles(m_arm, 0.0, 0.0));
+    
+
     /*************INTAKE CONTROL*****************/
     m_driverController.povDown().onTrue(new InstantCommand(() -> m_intake.SetCollector(0, 0.35)))
       .onFalse(new InstantCommand(() -> m_intake.SetCollector(0, 0.0)));
@@ -148,7 +149,7 @@ public class RobotContainer {
     m_driverController.leftTrigger().onTrue(new InstantCommand(() -> {m_intake.PivotIn(false);}))
       .onFalse(new InstantCommand(() -> m_intake.PivotIn(true)));
     
-    button9.whileTrue(new ArmToPos(m_arm, -2.0, -12.5));
+    button9.whileTrue(new ArmToAngles(m_arm, -2.0, -12.5));
 
     button5.whileTrue(new InstantCommand(() -> m_arm.setElbowMotors(0.2)));
     button3.whileTrue(new InstantCommand(() -> m_arm.setElbowMotors(-0.2)));

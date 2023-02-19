@@ -1,68 +1,46 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import static frc.robot.Constants.ArmConstants.PID.*;
 import static frc.robot.Constants.ArmConstants.*;
 
-public class ArmToPos extends CommandBase {
+public class ArmToAngles extends CommandBase {
   private Arm m_arm;
-  private Double targetShoulderAngle, targetElbowAngle, targetXPos, targetYPos;
-  private Joystick joystick;
-  public Trigger endTrigger;
+  private Double targetShoulderAngle, targetElbowAngle;
 
   private PIDController shoulderController = new PIDController(kShoulderP, kShoulderI, kShoulderD);
   private PIDController elbowController = new PIDController(kElbowP, kElbowI, kElbowD);
-  /** Creates a new ArmToPos. */
-  public ArmToPos(Arm arm, Double x, Double y, Joystick stick) {
+
+  /** Creates a new ArmToAngle. */
+  public ArmToAngles(Arm arm, Double shoulderAngle, Double elbowAngle) {
     m_arm = arm;
-    targetXPos = x;
-    targetYPos = y;
-    joystick = stick;
+    targetElbowAngle = elbowAngle > 155 || elbowAngle < -155 ? 0.0: elbowAngle;
+    targetShoulderAngle = shoulderAngle > 45 || shoulderAngle < -45 ? 0.0: shoulderAngle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
-  
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-  targetElbowAngle = m_arm.getIKElbow(targetXPos, targetYPos);
-  targetShoulderAngle = m_arm.getIKShoulder(targetXPos, targetYPos);
-  targetElbowAngle = targetElbowAngle > 155 || targetElbowAngle < -155 ? 0.0: targetElbowAngle;
-  targetShoulderAngle = targetShoulderAngle > 45 || targetShoulderAngle < -45 ? 0.0: targetShoulderAngle;
-  shoulderController.reset();
-  elbowController.reset();
-  elbowController.setSetpoint(targetElbowAngle);
-  shoulderController.setSetpoint(targetShoulderAngle);
-  elbowController.setTolerance(0.5);
-  shoulderController.setTolerance(0.5);
-  } 
+    shoulderController.reset();
+    elbowController.reset();
+    elbowController.setSetpoint(targetElbowAngle);
+    shoulderController.setSetpoint(targetShoulderAngle);
+    elbowController.setTolerance(0.5);
+    shoulderController.setTolerance(0.5);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (joystick.getPOV()) {
-      case 0: 
-        targetYPos += 1;
-      case 90:
-        targetXPos += 1;
-      case 180:
-        targetYPos -= 1;
-      case 270:
-        targetXPos -= 1;
-    }
-    targetElbowAngle = m_arm.getIKElbow(targetXPos, targetYPos);
-    targetShoulderAngle = m_arm.getIKShoulder(targetXPos, targetYPos);
-    elbowController.setSetpoint(targetElbowAngle);
-    shoulderController.setSetpoint(targetShoulderAngle);
     var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
     var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
     elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
@@ -74,13 +52,18 @@ public class ArmToPos extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elbowController.close();
+    m_arm.setElbowMotors(0.0);
+    m_arm.setShoulderMotors(0.0);
     shoulderController.close();
+    elbowController.close();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // if (shoulderController.atSetpoint() && elbowController.atSetpoint()) {
+    //   return true;
+    // }
     return false;
   }
 }
