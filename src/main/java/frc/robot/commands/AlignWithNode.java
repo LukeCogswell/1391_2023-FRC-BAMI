@@ -25,7 +25,7 @@ public class AlignWithNode extends CommandBase {
    * 
    * @param drivetrain - the current {@link Drivetrain}
    * @param whichNode - the desired node to travel to. 
-   * Integer values of 1, 2 and 3 are applicable, with 1 and 2 being cone nodes.
+   * Integer values of 1, 2 and 3 are applicable, with 1 and 3 being cone nodes.
    */
   public AlignWithNode(Drivetrain drivetrain, Integer whichNode) {
     node = whichNode;
@@ -38,78 +38,37 @@ public class AlignWithNode extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_drivetrain.botPoseSub.get().length != 6) {
-      System.out.println("STOPPINGGGGGG");
+    if (m_drivetrain.getTV() == 0) {
       this.cancel();
       return;
     } 
-
-    m_drivetrain.updateOdometryIfTag();
-    m_drivetrain.limelightToTagMode();
+    
     turnController.enableContinuousInput(-180, 180);
     turnController.setTolerance(2);
     xController.setTolerance(0.1);
     yController.setTolerance(0.1);
 
+    m_drivetrain.updateOdometryIfTag();
+    var tagID = m_drivetrain.getTID();
+    var tagPose = Constants.AprilTagFieldLayouts.AprilTagList.get(tagID - 1).pose;
+    
+
     if (node == 2) m_drivetrain.limelightToTagMode();
     else m_drivetrain.limelightToTapeMode();
 
-    if (m_drivetrain.getTV() == 0) {
-      this.cancel();
-      return;
-    }
-
-    var tagID = m_drivetrain.getTID();
-    var tagPose = Constants.AprilTagFieldLayouts.AprilTagList.get(tagID - 1).pose;
-    // var offsetY = getYOffset();
     var offsetY = 0.0;
-
-    if (tagID < 5) {
-      xController.setSetpoint(15);
-      turnController.setSetpoint(0);
-      if (node == 1 ) {
-        offsetY = -kNodeOffset; 
-      } else if (node == 3) {
-        offsetY = kNodeOffset;
-      }
-      targetYPos = tagPose.getY() + offsetY;
-    } else {
-      xController.setSetpoint(2);
-      turnController.setSetpoint(180);
-      if (node == 3 ) {
-        offsetY = -kNodeOffset; 
-      } else if (node == 1) {
-        offsetY = kNodeOffset;
-      }
-      targetYPos = tagPose.getY() - offsetY;
-    }
+    xController.setSetpoint(2);
+    turnController.setSetpoint(180);
+    if (node == 3 ) offsetY = -kNodeOffset; 
+    else if (node == 1) offsetY = kNodeOffset;
+    targetYPos = tagPose.getY() - offsetY;
+  
     yController.setSetpoint(targetYPos);
   }
-
-  // private double getYOffset() {
-  //   switch (node) {
-  //     case 1:
-  //       return kNodeOffset;
-      
-  //     case 2:
-  //       return 0.0;
-
-  //     case 3:
-  //       return -kNodeOffset;
-
-  //     default:
-  //       return 0.0;
-  //   }
-    
-  // }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if (Timer.getFPGATimestamp() % 1 < 0.03){
-    //   m_drivetrain.updateOdometryIfTag();
-
-    // }
     
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
     var yDrive = yController.calculate(m_drivetrain.getFieldPosition().getY());
@@ -124,6 +83,7 @@ public class AlignWithNode extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_drivetrain.drive(0.0, 0.0, 0.0, true);
     if (interrupted) {
       m_drivetrain.limelightToTagMode();
     }

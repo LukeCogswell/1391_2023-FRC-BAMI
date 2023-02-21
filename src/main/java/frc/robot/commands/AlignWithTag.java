@@ -7,9 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
-import static frc.robot.Constants.MeasurementConstants.*;
 import static frc.robot.Constants.SwerveModuleConstants.PID.*;
 
 public class AlignWithTag extends CommandBase {
@@ -58,27 +56,14 @@ public class AlignWithTag extends CommandBase {
       return;
     }
 
-    var tagID = m_drivetrain.getTID();
-
-
-    if (tagID < 5) {
-      xController.setSetpoint(15);
-      turnController.setSetpoint(0);
-    } else {
-      xController.setSetpoint(2);
-      turnController.setSetpoint(180);
-    }
+    xController.setSetpoint(2);
+    turnController.setSetpoint(0.0);
     yController.setSetpoint(0.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if (Timer.getFPGATimestamp() % 1 < 0.03){
-    //   m_drivetrain.updateOdometryIfTag();
-
-    // }
-    
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
     var yDrive = -yController.calculate(m_drivetrain.getTX());
     var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getRadians());

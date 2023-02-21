@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.CANConstants.*;
-import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
@@ -65,30 +64,30 @@ public class Arm extends SubsystemBase {
   // }
 
 
-  public double getIKShoulder(Double x, Double yraw) {
-    var y = yraw - 6.5; // inches to base height of arm
-    var x2 = Math.pow(x, 2);
-    var y2 = Math.pow(y, 2);
-    var hypoteneuse = Math.sqrt(x2 + y2);
-    return Math.copySign(90 - (180/Math.PI) * (
-      Math.atan(y/x)  + Math.acos(
-        (Math.pow(kShoulderLength, 2) + x2 + y2 - Math.pow(kElbowLength, 2) 
-          / (2 * kShoulderLength * hypoteneuse)
-          )
-        )
-      ), x);
+  // public double getIKShoulder(Double x, Double yraw) {
+  //   var y = yraw - 6.5; // inches to base height of arm
+  //   var x2 = Math.pow(x, 2);
+  //   var y2 = Math.pow(y, 2);
+  //   var hypoteneuse = Math.sqrt(x2 + y2);
+  //   return 90 - (180/Math.PI) * (
+  //     Math.atan(y/x)  + Math.acos(
+  //       (Math.pow(kShoulderLength, 2) + x2 + y2 - Math.pow(kElbowLength, 2) 
+  //         / (2 * kShoulderLength * hypoteneuse)
+  //         )
+  //       )
+  //     );
 
-  }
+  // }
 
-  public double getIKElbow(Double x, Double yraw) {
-    var y = yraw - 6.5; // inches to base height of arm
-    var x2 = Math.pow(x, 2);
-    var y2 = Math.pow(y, 2);
-    return Math.copySign((180 / Math.PI) * Math.acos(
-      (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
-    ), x);
+  // public double getIKElbow(Double x, Double yraw) {
+  //   var y = yraw - 6.5; // inches to base height of arm
+  //   var x2 = Math.pow(x, 2);
+  //   var y2 = Math.pow(y, 2);
+  //   return Math.copySign((180 / Math.PI) * Math.acos(
+  //     (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
+  //   ), x);
 
-  }
+  // }
 
 
   public double getElbowAngle() {

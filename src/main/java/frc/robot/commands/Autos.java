@@ -5,7 +5,10 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import static frc.robot.Constants.MeasurementConstants.*;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 
 import java.util.List;
@@ -22,6 +25,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public final class Autos {
@@ -29,6 +34,45 @@ public final class Autos {
   
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
+  }
+
+  public static CommandBase OneGPBalance(Drivetrain drivetrain, Arm arm, Intake intake) {
+    Constants.AUTO_EVENT_MAP.put("Collect", new InstantCommand(() -> {
+      intake.CollectorOut(true);
+      intake.SetCollector(0, 0.3);
+    }).andThen(new WaitCommand(0.4)).andThen(new InstantCommand(() -> {
+      intake.PivotIn(true);
+    })).andThen(new WaitCommand(0.7)).andThen(new InstantCommand(() -> {
+      intake.SetCollector(0, 0.0);
+    })));
+    
+    Constants.AUTO_EVENT_MAP.put("IntakeUp", new InstantCommand(() -> {
+      intake.CollectorOut(false);
+      intake.SetCollector(0, 0.0);
+    }));
+
+    PathPlannerTrajectory AutoPath = 
+      PathPlanner.loadPath("1GPBalanceCS", kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
+    
+    return Commands.sequence(
+      new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 1.81, 2.2, new Rotation2d(-drivetrain.getNavxYaw())))),
+      // new ArmToAngles(arm, -8.0, 90.0, true, 0.5).withTimeout(1),
+      // new ArmToAngles(arm, 20.0, 120.0, true, 0.2).withTimeout(1),
+      // new ArmToAngles(arm, 36.0, 154.0,, true, 0.1).withTimeout(1), //Score High
+      // new InstantCommand(() -> arm.GrabGp(false)),
+      // new WaitCommand(0.5),
+      // new ArmToAngles(arm, -8.0, 90.0, false, 0.5).withTimeout(1),
+      // new ArmToAngles(arm, 3.0, 0.0, true, 0.5),
+      new InstantCommand(() -> {
+        if (DriverStation.getAlliance() == Alliance.Red) drivetrain.setOdometry(new Pose2d( 1.81, 5.8, new Rotation2d(-drivetrain.getNavxYaw())));
+      }),
+      new ParallelCommandGroup(
+        new ArmToAngles(arm, 3.0, 0.0, true, 0.2),
+        new SequentialCommandGroup(
+          new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPath), AutoPath.getMarkers(), Constants.AUTO_EVENT_MAP),
+          new BalanceRobotOnChargingStation(drivetrain, () -> 0.2)
+      ))
+    );
   }
 
 

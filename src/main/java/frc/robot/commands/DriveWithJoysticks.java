@@ -77,7 +77,7 @@ public class DriveWithJoysticks extends CommandBase {
       m_PIDcontrol = false;
     }
 
-    m_precisionFactor = 1 - Math.pow(2, m_precision.getAsDouble());
+    m_precisionFactor = Math.pow(0.4 , m_precision.getAsDouble());
     m_xSpeed =
       -m_xLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_y.getAsDouble(), 2) * Math.signum(m_y.getAsDouble()), kDriveDeadband))
       * kMaxSpeedMetersPerSecond * kSpeedMultiplier * m_precisionFactor;

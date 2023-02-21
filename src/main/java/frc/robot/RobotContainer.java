@@ -6,19 +6,19 @@ package frc.robot;
 
 import static frc.robot.Constants.OIConstants.*;
 
+import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.Autos;
-// import frc.robot.commands.BalanceRobotOnChargingStation;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
+// import frc.robot.commands.ThrowCube;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -34,6 +34,7 @@ import frc.robot.subsystems.LEDs;
  */
 public class RobotContainer {
   Compressor phCompressor = new Compressor(30, PneumaticsModuleType.REVPH);
+  // private final ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final LEDs m_LEDs = new LEDs();
@@ -45,28 +46,45 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(kDriverControllerPort);
 
-  private final Joystick m_operatorStick =
-      new Joystick(1);
-  Trigger button1 = new JoystickButton(m_operatorStick, 1);
-  Trigger button2 = new JoystickButton(m_operatorStick, 2);
-  Trigger button3 = new JoystickButton(m_operatorStick, 3);
-  Trigger button4 = new JoystickButton(m_operatorStick, 4);
-  Trigger button5 = new JoystickButton(m_operatorStick, 5);
-  Trigger button6 = new JoystickButton(m_operatorStick, 6);
-  Trigger button7 = new JoystickButton(m_operatorStick, 7);
-  Trigger button8 = new JoystickButton(m_operatorStick, 8);
-  Trigger button9 = new JoystickButton(m_operatorStick, 9);
-  Trigger button10 = new JoystickButton(m_operatorStick, 10);
-  Trigger button11 = new JoystickButton(m_operatorStick, 11);
-  Trigger button12 = new JoystickButton(m_operatorStick, 12);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(kOperatorControllerPort);
 
-  Trigger povDownTrigger = new POVButton(m_operatorStick, 180);
-  Trigger povRightTrigger = new POVButton(m_operatorStick, 90);
-  Trigger povLeftTrigger = new POVButton(m_operatorStick, 270);
-  Trigger povUpTrigger = new POVButton(m_operatorStick, 0);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+
+
     phCompressor.enableDigital();
+    
+    // ShuffleboardLayout ArmControl = Shuffleboard.getTab("Commands")
+    // .getLayout("Gate", BuiltInLayouts.kList)
+    // .withSize(2,3)
+    // .withPosition(4,4)
+    // .withProperties(Map.of("Label Position", "LEFT"));
+    // GenericEntry armXEntry = 
+    //   ArmControl.add("X Pos", 5.0)
+    //     .withWidget(BuiltInWidgets.kNumberSlider)
+    //     .withProperties(Map.of("min", 0.0, "max", 50.0))
+    //     .getEntry();  
+    // GenericEntry armYEntry = 
+    //   ArmControl.add("Y Pos", 8.0)
+    //     .withWidget(BuiltInWidgets.kNumberSlider)
+    //     .withProperties(Map.of("min", 5.0, "max", 50.0))
+    //     .getEntry();  
+    // SuppliedValueWidget elbowAngle =
+    //   ArmControl.addNumber("Elbow", 
+    //   () -> m_arm.getIKElbow(
+    //     armXEntry.getDouble(5.0),
+    //     armYEntry.getDouble(8.0)));
+        
+    // SuppliedValueWidget shoulderAngle =
+    //   ArmControl.addNumber("Shoulder", 
+    //   () -> m_arm.getIKShoulder(
+    //     armXEntry.getDouble(5.0),
+    //     armYEntry.getDouble(8.0)));
+    
+
+
     m_drivetrain.setDefaultCommand(
       new DriveWithJoysticks(
         m_drivetrain, 
@@ -74,21 +92,14 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(), 
         () -> m_driverController.getRightX(), 
         () -> m_driverController.getRightTriggerAxis(), 
-        m_driverController.x()
+        m_driverController.y()
         )
     );
 
  
     // Configure the trigger bindings  
     configureBindings();
-
-    // m_arm.setDefaultCommand(new FunctionalCommand(() -> {}, () -> 
-    // {m_arm.setElbowMotors(m_operatorStick.getX());
-    //   m_arm.setShoulderMotors(m_operatorStick.getY());},
-    //    (interrupted) -> {m_arm.setShoulderMotors(0.0);
-    //   m_arm.setElbowMotors(0.0);}, () -> false, m_arm));
-
-    m_arm.setDefaultCommand(new HoldArm(m_arm));
+    m_arm.setDefaultCommand(new HoldArm(m_arm, m_operatorController));
   }
 
   /**
@@ -103,56 +114,107 @@ public class RobotContainer {
   private void configureBindings() {
     
     /*************DRIVEBASE CONTROL***********/
-    // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1).andThen(new AimAtNode(m_drivetrain)));
-    // m_driverController.povUp().whileTrue(new AlignWithNode(m_drivetrain, 2).andThen(new AimAtNode(m_drivetrain)));
-    // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3).andThen(new AimAtNode(m_drivetrain)));
-
-    // m_driverController.leftTrigger().whileTrue(new BalanceRobotOnChargingStation(m_drivetrain, () -> m_driverController.getLeftTriggerAxis()));
+    m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
+    m_driverController.povUp().whileTrue(new AlignWithNode(m_drivetrain, 2));
+    m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));
     
-    // button1.onTrue(new InstantCommand(() -> {}, m_arm)); // removes operator control of arm
     /*************ARM CONTROL*****************/
-    m_driverController.a().onTrue(new InstantCommand(() -> {m_arm.GrabGp(true);}));
-    m_driverController.b().onTrue(new InstantCommand(() -> {m_arm.GrabGp(false);}));
-    m_driverController.y().onTrue(new InstantCommand(() -> m_intake.CollectorOut(true)))
-      .onFalse(new InstantCommand(() -> m_intake.CollectorOut(false)));
+
+    m_operatorController.back().onTrue(new InstantCommand(() -> {}, m_arm));
+
+    // m_driverController.x().whileTrue(
+    //   new ArmToAngles(m_arm, 3.0, -14.0, m_operatorController, true, 0.15).withTimeout(1).andThen(
+    //   new ThrowCube(m_arm, 3.0, 150.0, m_operatorController, 0.5, 38.3)));
+
+    m_operatorController.y().whileTrue(
+      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15)).onFalse(
+      new ArmToAngles(m_arm, 20.0, 140.0, true, 0.12).withTimeout(1.5).andThen(
+      new ArmToAngles(m_arm, 36.0, 154.0, true, 0.08))); //Score High
+
+    m_operatorController.b().whileTrue(
+      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15)).onFalse(
+      new ArmToAngles(m_arm, 10.3, 98.0, true, 0.08)); // Score Mid
     
-    // button1.onTrue(new InstantCommand(() -> {m_intake.PivotIn(false);}))
-    // .onFalse(new InstantCommand(() -> m_intake.PivotIn(true)));
-      // ^^^moves arm to position to grab from the collector on the floor
+    m_operatorController.a().whileTrue(
+      new ArmToAngles(m_arm, 28.5, 37.4, true, 0.08)); // Score Low
+
+    m_operatorController.x()
+      .whileTrue(
+        new InstantCommand(() -> m_intake.CollectorOut(false)).andThen(
+        new WaitCommand(0.5)).andThen(
+        new ArmToAngles(m_arm, 4.0, -10.2, false, 0.15)))
+      .onFalse(
+        new InstantCommand(() -> m_arm.GrabGp(true)).andThen(
+          new WaitCommand(0.2)).andThen(
+            new InstantCommand(() -> m_intake.PivotIn(false))).andThen(
+              new WaitCommand(0.5)).andThen(
+                new ArmToAngles(m_arm, 3.0, 0.0, true, 0.15)
+                ) );
+                
+    m_operatorController.povDown().whileTrue(new ArmToAngles(m_arm, 3.0, 0.0, true, 0.15)); // go to zero(straight up and down)
+    m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
     
+    m_operatorController.povRight().onTrue(new InstantCommand(() -> m_arm.GrabGp(false)));
+    m_operatorController.povLeft().onTrue(new InstantCommand(() -> m_arm.GrabGp(true)));
     
-    
-    // povUpTrigger.whileTrue(new ArmToAngles(m_arm, 36.0, 152.0));
-    // povRightTrigger.whileTrue(new ArmToAngles(m_arm, 8.3, 94.0));
-    // povLeftTrigger.whileTrue(new ArmToAngles(m_arm, -36.9, -31.0));
-    // povDownTrigger.whileTrue(new ArmToAngles(m_arm, 0.0, 0.0));
-    
+    m_operatorController.rightTrigger()
+    .onTrue(new ArmToAngles(
+        m_arm, 
+        m_arm.getShoulderAngle() + 5.0, 
+        m_arm.getElbowAngle() - 2.0,
+        true, 0.1
+      ).withTimeout(0.3)
+      .andThen(new InstantCommand(() -> m_arm.GrabGp(false))))
+    .onFalse(new ArmToAngles(m_arm, 0.0, m_arm.getElbowAngle(), false, 0.2));
 
     /*************INTAKE CONTROL*****************/
-    m_driverController.povDown().onTrue(new InstantCommand(() -> m_intake.SetCollector(0, 0.35)))
-      .onFalse(new InstantCommand(() -> m_intake.SetCollector(0, 0.0)));
-    
-    m_driverController.povRight().onTrue(new InstantCommand(() -> m_intake.SetCollector(1, 0.5)).withTimeout(0.5)
-    .andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.35))))
-      .onFalse(new InstantCommand(() -> m_intake.SetCollector(0, 0.0)));
-    
-    m_driverController.povLeft().onTrue(new InstantCommand(() -> m_intake.SetCollector(-1, 0.5)).withTimeout(0.5)
-        .andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.35))))
-      .onFalse(new InstantCommand(() -> m_intake.SetCollector(0, 0.0)));
-    
-    m_driverController.povUp().onTrue(new InstantCommand(() -> m_intake.SetCollector(0, -1.0)))
-      .onFalse(new InstantCommand(() -> m_intake.SetCollector(0, 0.0)));
 
-    button6.onTrue(new InstantCommand(() -> m_intake.CollectorOut(true)));
-    button4.onTrue(new InstantCommand(() -> m_intake.CollectorOut(false)));
+    m_driverController.leftTrigger().onTrue(new InstantCommand(() -> {
+      m_intake.CollectorOut(true);
+      m_intake.PivotIn(false);
+      m_intake.SetCollector(0, 0.35);
+    })).onFalse(new InstantCommand(() -> {
+      m_intake.PivotIn(true);
+    }).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(() -> 
+      m_intake.SetCollector(0, 0.0))));
+
+    m_operatorController.leftBumper().onTrue(new InstantCommand(() -> 
+      m_intake.SetCollector(-1, 0.25)).andThen(new WaitCommand(0.3)).andThen(
+        new InstantCommand(() -> m_intake.SetCollector(0, 0.35)).andThen(
+        new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))
+      ));
+      
+    m_operatorController.rightBumper().onTrue(new InstantCommand(() -> 
+      m_intake.SetCollector(1, 0.25)).andThen(new WaitCommand(0.3)).andThen(
+        new InstantCommand(() -> m_intake.SetCollector(0, 0.35)).andThen(
+          new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))
+      ));
+
+    m_driverController.start().onFalse(new InstantCommand(() -> m_intake.CollectorOut(false)));
     
-    m_driverController.leftTrigger().onTrue(new InstantCommand(() -> {m_intake.PivotIn(false);}))
+    m_operatorController.start()
+      .onTrue(new InstantCommand(() -> m_intake.PivotIn(false)))
       .onFalse(new InstantCommand(() -> m_intake.PivotIn(true)));
-    
-    button9.whileTrue(new ArmToAngles(m_arm, -2.0, -12.5));
 
-    button5.whileTrue(new InstantCommand(() -> m_arm.setElbowMotors(0.2)));
-    button3.whileTrue(new InstantCommand(() -> m_arm.setElbowMotors(-0.2)));
+    m_operatorController.povLeft().onTrue(new InstantCommand(() -> m_intake.PivotIn(true)));
+
+
+    /******************LED CONTROL***************/
+    m_operatorController.leftStick()
+    .onTrue(new InstantCommand(
+      () -> m_LEDs.setLEDS(Color.kYellow)
+      ))
+      .onFalse(new InstantCommand(
+      () -> m_LEDs.setLEDS(Color.kBlack)
+    ));
+
+    m_operatorController.rightStick()
+    .onTrue(new InstantCommand(
+      () -> m_LEDs.setLEDS(Color.kPurple)
+      ))
+    .onFalse(new InstantCommand(
+      () -> m_LEDs.setLEDS(Color.kBlack)
+    ));
 
   }
 
@@ -162,6 +224,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Autos.ThreeGPBalanceNonCC(m_drivetrain, m_LEDs);
+    return Autos.OneGPBalance(m_drivetrain, m_arm, m_intake);
   }
 }

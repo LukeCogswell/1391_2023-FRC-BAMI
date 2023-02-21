@@ -64,7 +64,6 @@ public class Drivetrain extends SubsystemBase {
       .setKinematics(m_kinematics);
 
 
-  // public RobotPoseEstimator poseEstimator;
 
   /** 
    * Constructor creates 4 objects of the {@link SwerveModule} class. 
@@ -225,7 +224,7 @@ public class Drivetrain extends SubsystemBase {
         yController,
         thetaController,
         this::setModuleStates,
-        false,
+        true,
         this);
     return swerveControllerCommand.andThen(() -> stop());
   }

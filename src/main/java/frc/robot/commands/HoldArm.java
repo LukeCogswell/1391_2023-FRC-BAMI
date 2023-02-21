@@ -7,17 +7,28 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
 import static frc.robot.Constants.ArmConstants.PID.*;
 import static frc.robot.Constants.ArmConstants.*;
 
 public class HoldArm extends CommandBase {
   Arm m_arm;
+  private Double targetElbowAngle, targetShoulderAngle;
+  private CommandXboxController controller;
   private PIDController shoulderController = new PIDController(kShoulderP, kShoulderI, kShoulderD);
   private PIDController elbowController = new PIDController(kElbowP, kElbowI, kElbowD);
   /** Creates a new HoldArm. */
-  public HoldArm(Arm arm) {
+  /*
+   *  Holds arm at cuurrent position
+   * 
+   *  @param Controller - which controller to reference for stick values for incremental adjustments 
+   * 
+   * 
+   */
+  public HoldArm(Arm arm, CommandXboxController Controller) {
     m_arm = arm;
+    controller = Controller;
     addRequirements(arm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -27,19 +38,35 @@ public class HoldArm extends CommandBase {
   public void initialize() {
     shoulderController.reset();
     elbowController.reset();
-    elbowController.setSetpoint( m_arm.getElbowAngle());
-    shoulderController.setSetpoint(m_arm.getShoulderAngle());
-    elbowController.enableContinuousInput(-180.0, 180.0);
+    targetShoulderAngle = m_arm.getShoulderAngle();
+    targetElbowAngle = m_arm.getElbowAngle(); 
+    shoulderController.setSetpoint(targetShoulderAngle);
+    elbowController.setSetpoint(targetElbowAngle);
     shoulderController.enableContinuousInput(-180.0, 180.0);
+    elbowController.enableContinuousInput(-180.0, 180.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (Math.abs(controller.getLeftY()) > 0.2) {
+      var prevAngle = targetElbowAngle;
+      targetElbowAngle -= Math.copySign(0.3, controller.getLeftY());
+      targetElbowAngle = targetElbowAngle > 165 || targetElbowAngle < -165 ? prevAngle: targetElbowAngle;
+      elbowController.setSetpoint(targetElbowAngle);
+    }
+    if (Math.abs(controller.getRightY()) > 0.2) {
+      var prevAngle = targetShoulderAngle;
+      targetShoulderAngle += Math.copySign(0.3, controller.getRightY());
+      targetShoulderAngle = targetShoulderAngle > 37 || targetShoulderAngle < -37 ? prevAngle: targetShoulderAngle;
+      shoulderController.setSetpoint(targetShoulderAngle);
+    }
+    
     var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
     var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
     elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
     shoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);
+
     m_arm.setElbowMotors(elbowSpeed);
     m_arm.setShoulderMotors(-shoulderSpeed);
   }

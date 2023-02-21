@@ -30,6 +30,8 @@ public class AimAtNode extends CommandBase {
     }
     rotController.setSetpoint(0);
     rotController.setTolerance(2);
+    driveController.setSetpoint(13.5);
+    driveController.setTolerance(0.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

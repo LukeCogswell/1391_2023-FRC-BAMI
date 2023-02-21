@@ -33,7 +33,8 @@ public final class Constants {
     public static final int kBButtonID = 2;
     public static final int kXButtonID = 3;
     public static final int kYButtonID = 4;
-    public static int kDriverControllerPort;
+    public static int kDriverControllerPort = 0;
+    public static int kOperatorControllerPort = 1;
 
   }
 
@@ -177,12 +178,15 @@ public final class Constants {
 public static final class AprilTagFieldLayouts {
   private static final double kGridTagHeight = 18.22 / kInchesToMeters;
   private static final double kSubstationTagHeight = 27.38 / kInchesToMeters;
-  private static final double kRedTagX = 610.77 / kInchesToMeters;
   private static final double kBlueTagX = 40.45 / kInchesToMeters;
-  public static final AprilTag TagId1 = new AprilTag(1, new Pose3d(kRedTagX, 42.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
-  public static final AprilTag TagId2 = new AprilTag(2, new Pose3d(kRedTagX, 108.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
-  public static final AprilTag TagId3 = new AprilTag(3, new Pose3d(kRedTagX, 174.19/ kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
-  public static final AprilTag TagId4 = new AprilTag(4, new Pose3d(636.96 / kInchesToMeters, 265.74 / kInchesToMeters, kSubstationTagHeight, new Rotation3d(0, 0, 180)));
+  // private static final double kRedTagX = 610.77 / kInchesToMeters;
+  // public static final AprilTag TagId1 = new AprilTag(1, new Pose3d(kRedTagX, 42.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
+  // public static final AprilTag TagId2 = new AprilTag(2, new Pose3d(kRedTagX, 108.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
+  // public static final AprilTag TagId3 = new AprilTag(3, new Pose3d(kRedTagX, 174.19/ kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 180)));
+  public static final AprilTag TagId1 = new AprilTag(1, new Pose3d(kBlueTagX, 174.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 0)));
+  public static final AprilTag TagId2 = new AprilTag(2, new Pose3d(kBlueTagX, 108.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 0)));
+  public static final AprilTag TagId3 = new AprilTag(3, new Pose3d(kBlueTagX, 42.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 0)));
+  public static final AprilTag TagId4 = new AprilTag(4, new Pose3d(14.25 / kInchesToMeters, -49.36 / kInchesToMeters, kSubstationTagHeight, new Rotation3d(0, 0, 180)));
   public static final AprilTag TagId5 = new AprilTag(5, new Pose3d(14.25 / kInchesToMeters, 265.74 / kInchesToMeters, kSubstationTagHeight, new Rotation3d(0, 0, 0)));
   public static final AprilTag TagId6 = new AprilTag(6, new Pose3d(kBlueTagX, 174.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 0)));
   public static final AprilTag TagId7 = new AprilTag(7, new Pose3d(kBlueTagX, 108.19 / kInchesToMeters, kGridTagHeight, new Rotation3d(0, 0, 0)));
