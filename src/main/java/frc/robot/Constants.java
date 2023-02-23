@@ -52,6 +52,9 @@ public final class Constants {
     public static final double kHybridNodeDepth = 16 / kInchesToMeters;
     public static final double kNodeOffset = 20.25 / kInchesToMeters;
 
+    public static final double kFieldX = 649 / kInchesToMeters;
+    public static final double kFieldY = 319 / kInchesToMeters;
+
     public static final double kFrontLeftEncoderOffset = 86.1;
     public static final double kBackLeftEncoderOffset = 179;//122// Must be degrees
     public static final double kFrontRightEncoderOffset = 269.12;//96.5 // Must be degrees
@@ -68,7 +71,7 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 5880 / 60.0 *
       SwerveModuleConstants.kDriveReduction *
       MeasurementConstants.kWheelDiameterMeters * Math.PI; // ~ 4.6 m/s
-      public static final double kMaxAccelerationMetersPerSecondSquared = 10;
+      public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = kMaxSpeedMetersPerSecond /
       Math.hypot(kModuleXOffsetMeters / 2.0, kModuleYOffsetMeters / 2.0);
   }

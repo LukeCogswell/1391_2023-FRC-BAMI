@@ -49,12 +49,12 @@ public class Intake extends SubsystemBase {
     //0 -> pull in , 1 -> clockwise, -1 -> counter clockwise
     switch(mode) {
       case 1:
-        lMotor.set(-speed);
+        lMotor.set(-speed/2);
         rMotor.set(-speed);
         break;
       case -1:
         lMotor.set(speed);
-        rMotor.set(speed);
+        rMotor.set(speed/2);
         break;
       case 2:
         lMotor.set(-speed);

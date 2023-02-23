@@ -57,11 +57,11 @@ public class AlignWithNode extends CommandBase {
     else m_drivetrain.limelightToTapeMode();
 
     var offsetY = 0.0;
-    xController.setSetpoint(2);
-    turnController.setSetpoint(180);
+    xController.setSetpoint(1.8);
+    turnController.setSetpoint(0);
     if (node == 3 ) offsetY = -kNodeOffset; 
     else if (node == 1) offsetY = kNodeOffset;
-    targetYPos = tagPose.getY() - offsetY;
+    targetYPos = tagPose.getY() + offsetY;
   
     yController.setSetpoint(targetYPos);
   }
@@ -72,10 +72,10 @@ public class AlignWithNode extends CommandBase {
     
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
     var yDrive = yController.calculate(m_drivetrain.getFieldPosition().getY());
-    var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getRadians());
-    rot = MathUtil.clamp(rot, -1, 1);
-    xDrive = MathUtil.clamp(xDrive, -1.4, 1.4);
-    yDrive = MathUtil.clamp(yDrive, -1.4, 1.4);
+    var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getDegrees());
+    rot = MathUtil.clamp(rot, -0.7, 0.7);
+    xDrive = MathUtil.clamp(xDrive, -.4, .4);
+    yDrive = MathUtil.clamp(yDrive, -.4, .4);
 
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }

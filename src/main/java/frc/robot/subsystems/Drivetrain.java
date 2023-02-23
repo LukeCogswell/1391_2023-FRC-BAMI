@@ -109,7 +109,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getNavxYaw() {
-    var pos = navx.getYaw() + Timer.getFPGATimestamp() * 0.005 % 360;
+    var pos = navx.getYaw() + Timer.getFPGATimestamp() * 0.009 % 360;
     return pos < -180 ? pos + 360 : pos;
   }
 
@@ -145,9 +145,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setOdometry(Pose2d pose) {
-    odometer.resetPosition(new Rotation2d(0), getModulePositions(), pose);
+    odometer.resetPosition(new Rotation2d(-getNavxYaw() * Math.PI / 180), getModulePositions(), pose);
   }
-
+  
+  public void setAprilTagOdometry(Pose2d pose) {
+    odometer.resetPosition(new Rotation2d(), getModulePositions(), pose);
+  }
+  
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
@@ -232,18 +236,20 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
+    SmartDashboard.putNumber("NavXYaw", getNavxYaw());
+    SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
   }
 
   public void updateOdometryIfTag() {
-    if (getTV() == 1 && getTID() < 9 && isDetectingAprilTags()) {
-      var newPos = getRobotPoseFromAprilTag();
-      if (oldPos != newPos) {
-        setOdometry(newPos);
+      if (getTV() == 1 && getTID() < 4 || getTID() > 5 &&  getTID() < 9 && isDetectingAprilTags()) {
+        var newPos = getRobotPoseFromAprilTag();
+        if (oldPos != newPos) {
+          setOdometry(newPos);
+        }
+          
+        oldPos = newPos;
       }
-        
-      oldPos = newPos;
-    }
     
   }
 
@@ -280,10 +286,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Pose2d getRobotPoseFromAprilTag() {
-    var entry = limelightTable.getEntry("botpose").getDoubleArray(new double[]{});
-    var pose2d = new Pose2d(new Translation2d(entry[0] + 8.27, entry[1] + 4.01), new Rotation2d(0));
-
-    return pose2d;
+      var entry = limelightTable.getEntry("botpose").getDoubleArray(new double[]{getFieldPosition().getX(), getFieldPosition().getY()});
+      var pose2d = new Pose2d(new Translation2d(entry[0], entry[1]), odometer.getPoseMeters().getRotation());
+  
+      return pose2d;
   }
 
 }
