@@ -236,6 +236,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
+    
     SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());

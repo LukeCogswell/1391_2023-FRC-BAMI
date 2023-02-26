@@ -55,18 +55,16 @@ public final class Constants {
     public static final double kFieldX = 649 / kInchesToMeters;
     public static final double kFieldY = 319 / kInchesToMeters;
 
-    public static final double kFrontLeftEncoderOffset = 86.1;
-    public static final double kBackLeftEncoderOffset = 179;//122// Must be degrees
-    public static final double kFrontRightEncoderOffset = 269.12;//96.5 // Must be degrees
-    public static final double kBackRightEncoderOffset = 27.8;//260 // Must be degrees
+    public static final double kFrontLeftEncoderOffset = 88.77;//86.1     11
+    public static final double kBackLeftEncoderOffset = 177.13;//179          12
+     public static final double kFrontRightEncoderOffset = 264.79;// 269.12  10
+    public static final double kBackRightEncoderOffset = 22.06;// 27.8       9 
 
-    // public static final double kFrontLeftEncoderOffset = 89; // Must be degrees
-    // public static final double kBackLeftEncoderOffset = 117.8;//122// Must be degrees
-    // public static final double kFrontRightEncoderOffset = 266.1;//96.5 // Must be degrees
-    // public static final double kBackRightEncoderOffset = 89.12;//260 // Must be degrees
-
-    public static final double kShoulderEncoderOffset = 345.8; // FIND THIS
+    public static final double kShoulderEncoderOffset = 348.9; // FIND THIS
     public static final double kElbowEncoderOffset = -46.7; // FIND THIS
+
+    public static final double kShoulderLength = 42;
+    public static final double kElbowLength = 34;
 
     public static final double kMaxSpeedMetersPerSecond = 5880 / 60.0 *
       SwerveModuleConstants.kDriveReduction *
@@ -145,19 +143,19 @@ public final class Constants {
 
   public static final class CANConstants {
     public static final int kFrontLeftDriveMotorID = 3;
-    public static final int kBackLeftDriveMotorID = 1;
+    public static final int kBackLeftDriveMotorID = 2;
     public static final int kFrontRightDriveMotorID = 4;
-    public static final int kBackRightDriveMotorID = 2;
+    public static final int kBackRightDriveMotorID = 1;
 
     public static final int kFrontLeftSteerMotorID = 7;
-    public static final int kBackLeftSteerMotorID = 5;
+    public static final int kBackLeftSteerMotorID = 6;
     public static final int kFrontRightSteerMotorID = 8;
-    public static final int kBackRightSteerMotorID = 6;
+    public static final int kBackRightSteerMotorID = 5;
 
-    public static final int kFrontLeftEncoderID = 9;
-    public static final int kBackLeftEncoderID = 12;
-    public static final int kFrontRightEncoderID = 11;
-    public static final int kBackRightEncoderID = 10;
+    public static final int kFrontLeftEncoderID = 11; //9
+    public static final int kBackLeftEncoderID = 12;// 12
+    public static final int kFrontRightEncoderID = 10;// 11
+    public static final int kBackRightEncoderID = 9;// 10
 
     public static final int kElbowEncoderID = 14;
     public static final int kShoulderEncoderID = 13;

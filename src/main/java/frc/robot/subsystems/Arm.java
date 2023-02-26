@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
   private CANSparkMax rShoulderMotor = new CANSparkMax(kRightShoulderMotorID, MotorType.kBrushless);
   private DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(1);
   private DutyCycleEncoder shoulderEncoder = new DutyCycleEncoder(0);
-  private DoubleSolenoid grabberPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 4, 5);
+  private DoubleSolenoid grabberPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 2, 3);
   /** Creates a new Arm. */
   public Arm() {
     lShoulderMotor.setInverted(false);
@@ -31,7 +31,7 @@ public class Arm extends SubsystemBase {
     rElbowMotor.setInverted(false);
     lElbowMotor.setInverted(true);
 
-    grabberPiston.set(kForward);
+    grabberPiston.set(kReverse);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void GrabGp(Boolean tf) {
-    grabberPiston.set(tf ? kForward : kReverse);
+    grabberPiston.set(tf ? kReverse : kForward);
   }
 
   public void setElbowMotors(Double speed) {
@@ -64,30 +64,28 @@ public class Arm extends SubsystemBase {
   // }
 
 
-  // public double getIKShoulder(Double x, Double yraw) {
-  //   var y = yraw - 6.5; // inches to base height of arm
-  //   var x2 = Math.pow(x, 2);
-  //   var y2 = Math.pow(y, 2);
-  //   var hypoteneuse = Math.sqrt(x2 + y2);
-  //   return 90 - (180/Math.PI) * (
-  //     Math.atan(y/x)  + Math.acos(
-  //       (Math.pow(kShoulderLength, 2) + x2 + y2 - Math.pow(kElbowLength, 2) 
-  //         / (2 * kShoulderLength * hypoteneuse)
-  //         )
-  //       )
-  //     );
+  public double getIKShoulder(Double x, Double y) {
+    var x2 = Math.pow(x, 2);
+    var y2 = Math.pow(y, 2);
+    var hypoteneuse = Math.sqrt(x2 + y2);
+    return Math.copySign(90 - (180/Math.PI) * (
+      Math.atan(y/Math.abs(x))  + Math.acos(
+        (Math.pow(kShoulderLength, 2) + x2 + y2 - Math.pow(kElbowLength, 2) 
+          / (2 * kShoulderLength * hypoteneuse)
+          )
+        )
+      ), Math.signum(x));
 
-  // }
+  }
 
-  // public double getIKElbow(Double x, Double yraw) {
-  //   var y = yraw - 6.5; // inches to base height of arm
-  //   var x2 = Math.pow(x, 2);
-  //   var y2 = Math.pow(y, 2);
-  //   return Math.copySign((180 / Math.PI) * Math.acos(
-  //     (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
-  //   ), x);
+  public double getIKElbow(Double x, Double y) {
+    var x2 = Math.pow(x, 2);
+    var y2 = Math.pow(y, 2);
+    return Math.copySign((180 / Math.PI) * Math.acos(
+      (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
+    ), Math.signum(x));
 
-  // }
+  }
 
 
   public double getElbowAngle() {

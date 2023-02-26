@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
   private DoubleSolenoid extensionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 0, 1);
-  private DoubleSolenoid collectionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 2, 3);
+  private DoubleSolenoid collectionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 4, 5);
   private CANSparkMax lMotor = new CANSparkMax(kLeftCollectorMotorID, MotorType.kBrushless);
   private CANSparkMax rMotor = new CANSparkMax(kRightCollectorMotorID, MotorType.kBrushless);
   /** Creates a new Intake. */
   public Intake() {
-    collectionPiston.set(kReverse);
-    extensionPiston.set(kForward);
+    collectionPiston.set(kForward);
+    extensionPiston.set(kReverse);
   }
 
   @Override
@@ -29,8 +29,9 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void CollectorOut(Boolean tf) {
-    extensionPiston.set(tf ? kReverse : kForward);
+  public void CollectorOut(Boolean tf, LEDs LEDS) {
+    extensionPiston.set(tf ? kForward : kReverse);
+    LEDS.intaking = tf;
   }
   
   public void PivotIn(Boolean tf) {
@@ -38,7 +39,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Boolean isExtended() {
-    var state = collectionPiston.get() == kForward ? false : true;
+    var state = collectionPiston.get() == kReverse ? false : true;
     return state;
   }
 

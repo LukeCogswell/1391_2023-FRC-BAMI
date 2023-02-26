@@ -12,25 +12,35 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDs extends SubsystemBase {
-  private AddressableLED m_led = new AddressableLED(9);
-  private Boolean ambulanceMode = false;
-  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(64);
-  private Color[] ambulanceList = {Color.kRed, Color.kBlue, Color.kWhite};
+  private AddressableLED m_led = new AddressableLED(0);
+  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(48);
+  public Boolean intaking = true;
+  private Color kRed = new Color(40, 0, 0);
   /** Creates a new LEDs. */
   public LEDs() {
-    m_led.setLength(64);
+    m_led.setLength(48);
+    setLEDS(kRed);
   }
-
+  
   @Override
   public void periodic() {
-    if (ambulanceMode) {
-      setLEDS(ambulanceList[((int)(Math.random() * 2))]);
-    }
+    if (intaking && Timer.getFPGATimestamp() < 15) {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setLED(i, kRed);
+      }
+      setIntakeBlock(Color.kWhite, 3, 20.0); 
+      m_led.setData(m_ledBuffer);
+      m_led.start();
+    } else setLEDS(kRed);
     // This method will be called once per scheduler run
   }
 
-  public void toggleAmbulance() {
-    ambulanceMode = !ambulanceMode;
+  public void setIntakeBlock(Color color, Integer size, Double speed) {
+    for (var i = 0; i < size; i++) {
+      m_ledBuffer.setLED((33 + ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+      m_ledBuffer.setLED((32 - ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+    }
   }
 
   public void setLEDS(Color color) {
@@ -42,22 +52,8 @@ public class LEDs extends SubsystemBase {
    m_led.start();
   }
 
-  public void setLEDsWithJoystick(Double r, Double g, Double b) {
-    if (Timer.getFPGATimestamp() % 0.1 < 0.03) {
-
-      for (var i = 0; i< m_ledBuffer.getLength(); i++) {
-        m_ledBuffer.setLED(i, new Color(r / 2 + 0.5, g / 2 + 0.5, b / 2 + 0.5));
-      }
-      m_led.setData(m_ledBuffer);
-      m_led.start();
-    }
-  }
-
   public void LEDsOff() {
-    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-      m_ledBuffer.setLED(i, Color.kBlack);
-    }
-    m_led.setData(m_ledBuffer);
+    setLEDS(Color.kBlack);
   }
 
 }
