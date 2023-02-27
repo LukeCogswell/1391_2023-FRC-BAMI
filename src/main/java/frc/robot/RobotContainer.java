@@ -42,6 +42,7 @@ import frc.robot.subsystems.LEDs;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  Color kYellow = new Color(202, 198, 47);
   Compressor phCompressor = new Compressor(30, PneumaticsModuleType.REVPH);
   // private final ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
   // The robot's subsystems and commands are defined here...
@@ -101,7 +102,7 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(), 
         () -> m_driverController.getRightX(), 
         () -> m_driverController.getRightTriggerAxis(), 
-        m_driverController.b()
+        m_driverController.start()
         )
     );
 
@@ -126,12 +127,12 @@ public class RobotContainer {
     
     m_driverController.x().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kPurple))
     .andThen(new WaitCommand(5).andThen(new InstantCommand(() -> m_LEDs.setLEDS(Color.kRed)))));
-    m_driverController.y().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kYellow))
+    m_driverController.y().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kGold))
     .andThen(new WaitCommand(5).andThen(new InstantCommand(() -> m_LEDs.setLEDS(Color.kRed)))));
     
-    m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
+    // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
     m_driverController.povUp().whileTrue(new AlignWithNode(m_drivetrain, 2));
-    m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));
+    // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));
     
     m_driverController.a().onTrue(new InstantCommand(() -> m_drivetrain.limelightToTagMode()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_LEDs.intaking = !m_LEDs.intaking));
@@ -150,7 +151,7 @@ public class RobotContainer {
       m_intake.SetCollector(0, 0.35);
       })).onFalse(new InstantCommand(() -> {
         m_intake.PivotIn(true);
-      }).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> 
+      }).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(() -> 
         m_intake.SetCollector(0, 0.0))));
       
     m_driverController.leftBumper().onTrue(new InstantCommand(() -> 
@@ -165,25 +166,31 @@ public class RobotContainer {
       new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))
       ));
         
-    m_driverController.start().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)));
+    m_driverController.a().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)));
         
+    m_driverController.back()
+    .onTrue(new InstantCommand(() -> 
+    m_intake.SetCollector(2, 0.9)))
+    .onFalse(new InstantCommand(() -> 
+    m_intake.SetCollector(0, 0.0)));
         
     /******************LED CONTROL***************/
+      
     m_driverController.y()
     .onTrue(new InstantCommand(
-      () -> m_LEDs.setLEDS(Color.kYellow)
-      ))
-      .onFalse(new InstantCommand(
-      () -> m_LEDs.setLEDS(Color.kBlack)
-    ));
-
-    m_driverController.b()
-    .onTrue(new InstantCommand(
       () -> m_LEDs.setLEDS(Color.kPurple)
-      ))
-    .onFalse(new InstantCommand(
+      )
+    .andThen(new WaitCommand(5).andThen(
       () -> m_LEDs.setLEDS(Color.kBlack)
-    ));
+    )));
+
+    m_driverController.x()
+    .onTrue(new InstantCommand(
+      () -> m_LEDs.setLEDS(Color.kPurple), m_LEDs
+      )
+    .andThen(new WaitCommand(5).andThen(
+      () -> m_LEDs.setLEDS(Color.kBlack)
+    )));
 
 
     /*************OPERATOR CONTROLLER*****************/
@@ -192,7 +199,7 @@ public class RobotContainer {
 
     m_operatorController.y().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
-      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15)).andThen(
+      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1.5)).andThen(
       new ArmToAngles(m_arm, 20.0, 150.0, true, 0.15).withTimeout(1.5).andThen(
       new ArmToAngles(m_arm, 36.0, 154.0, true, 0.12)))); //Score High
 
@@ -209,8 +216,7 @@ public class RobotContainer {
       .whileTrue(
         new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(
         new WaitCommand(0.5)).andThen(
-        new ArmToAngles(m_arm, 4.2, -11.2, false, 0.15)).withTimeout(1).andThen(
-        new InstantCommand(() -> m_arm.GrabGp(true))));
+        new ArmToAngles(m_arm, 4.2, -11.2, false, 0.15)));
           // new WaitCommand(0.2)).andThen(
           //   new InstantCommand(() -> m_intake.PivotIn(false))).andThen(
           //     new WaitCommand(0.5)).andThen(
@@ -218,7 +224,7 @@ public class RobotContainer {
           //       ) );
                 
     m_operatorController.povDown().whileTrue(
-      new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).andThen(
+      new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
       new ArmToAngles(m_arm, 3.0, 0.0, true, 0.3))); // go to zero(straight up and down)
     
       m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));

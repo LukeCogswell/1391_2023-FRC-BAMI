@@ -14,17 +14,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDs extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(0);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(48);
-  public Boolean intaking = true;
+  public Boolean intaking = false;
   private Color kRed = new Color(40, 0, 0);
   /** Creates a new LEDs. */
   public LEDs() {
     m_led.setLength(48);
-    setLEDS(kRed);
+    setLEDS(Color.kRed);
   }
   
   @Override
   public void periodic() {
-    if (intaking && Timer.getFPGATimestamp() < 15) {
+    
+    if (intaking) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
         // Sets the specified LED to the RGB values for red
         m_ledBuffer.setLED(i, kRed);
@@ -32,9 +33,10 @@ public class LEDs extends SubsystemBase {
       setIntakeBlock(Color.kWhite, 3, 20.0); 
       m_led.setData(m_ledBuffer);
       m_led.start();
-    } else setLEDS(kRed);
+    }
     // This method will be called once per scheduler run
   }
+
 
   public void setIntakeBlock(Color color, Integer size, Double speed) {
     for (var i = 0; i < size; i++) {

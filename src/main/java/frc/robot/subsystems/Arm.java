@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
   private CANSparkMax rShoulderMotor = new CANSparkMax(kRightShoulderMotorID, MotorType.kBrushless);
   private DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(1);
   private DutyCycleEncoder shoulderEncoder = new DutyCycleEncoder(0);
-  private DoubleSolenoid grabberPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 2, 3);
+  private DoubleSolenoid grabberPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 0, 1);
   /** Creates a new Arm. */
   public Arm() {
     lShoulderMotor.setInverted(false);

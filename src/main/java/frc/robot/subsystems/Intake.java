@@ -14,14 +14,14 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private DoubleSolenoid extensionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 0, 1);
-  private DoubleSolenoid collectionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 4, 5);
+  private DoubleSolenoid extensionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 3, 2);
+  private DoubleSolenoid collectionPiston = new DoubleSolenoid(30, PneumaticsModuleType.REVPH, 5, 4);
   private CANSparkMax lMotor = new CANSparkMax(kLeftCollectorMotorID, MotorType.kBrushless);
   private CANSparkMax rMotor = new CANSparkMax(kRightCollectorMotorID, MotorType.kBrushless);
   /** Creates a new Intake. */
   public Intake() {
-    collectionPiston.set(kForward);
-    extensionPiston.set(kReverse);
+    collectionPiston.set(kReverse);
+    extensionPiston.set(kForward);
   }
 
   @Override
@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void CollectorOut(Boolean tf, LEDs LEDS) {
-    extensionPiston.set(tf ? kForward : kReverse);
+    extensionPiston.set(tf ? kReverse : kForward);
     LEDS.intaking = tf;
   }
   
