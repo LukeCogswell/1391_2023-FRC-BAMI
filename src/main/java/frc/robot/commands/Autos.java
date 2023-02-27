@@ -36,6 +36,26 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+  public static CommandBase OneGPMobility(Drivetrain drivetrain, Arm arm, Intake intake, LEDs LEDs) {
+    return Commands.sequence(
+      new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 1.81, 2.2, new Rotation2d(0.0)))),
+      new ArmToAngles(arm, -8.0, 90.0, true, 0.5).withTimeout(1.5),
+      new ArmToAngles(arm, 20.0, 150.0, true, 0.2).withTimeout(1.5),
+      new ArmToAngles(arm, 36.0, 154.0, true, 0.2).withTimeout(1.5), //Score High
+      new InstantCommand(() -> arm.GrabGp(false)),
+      new WaitCommand(0.3),
+      new ArmToAngles(arm, -8.0, 90.0, false, 0.5).withTimeout(1.5),
+      new ArmToAngles(arm, 3.0, 0.0, true, 0.5),
+      new InstantCommand(() -> {
+        if (DriverStation.getAlliance() == Alliance.Red) drivetrain.setOdometry(new Pose2d( 1.81, 5.8, new Rotation2d(-drivetrain.getNavxYaw())));
+      }),
+      new ParallelCommandGroup(
+        new ArmToAngles(arm, 3.0, 0.0, true, 0.2),
+        new DriveForDistanceInDirection(drivetrain, 3.0, 0.0)
+      )
+    );
+  }
+
   public static CommandBase OneGPBalance(Drivetrain drivetrain, Arm arm, Intake intake, LEDs LEDs) {
     Constants.AUTO_EVENT_MAP.put("Collect", new InstantCommand(() -> {
       intake.CollectorOut(true, LEDs);

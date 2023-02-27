@@ -11,6 +11,7 @@ import java.util.Map;
 import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
 import frc.robot.commands.ThrowCube;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
+import static frc.robot.Constants.MeasurementConstants.*;
 // import frc.robot.subsystems.Stinger;
 
 /**
@@ -130,6 +132,8 @@ public class RobotContainer {
     m_driverController.y().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kGold))
     .andThen(new WaitCommand(5).andThen(new InstantCommand(() -> m_LEDs.setLEDS(Color.kRed)))));
     
+    m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, 22 / kInchesToMeters));
+    m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, -22 / kInchesToMeters));
     // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
     m_driverController.povUp().whileTrue(new AlignWithNode(m_drivetrain, 2));
     // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));

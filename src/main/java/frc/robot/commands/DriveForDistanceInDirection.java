@@ -37,7 +37,7 @@ public class DriveForDistanceInDirection extends CommandBase {
     currentPos = m_drivetrain.getFieldPosition();
     xController.setSetpoint(currentPos.getX() + xDistance);
     yController.setSetpoint(currentPos.getY() + yDistance);
-    SmartDashboard.putString("StartingPos", currentPos.toString());
+    // SmartDashboard.putString("StartingPos", currentPos.toString());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,7 +55,7 @@ public class DriveForDistanceInDirection extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("Ending Pos", m_drivetrain.getFieldPosition().toString());
+    // SmartDashboard.putString("Ending Pos", m_drivetrain.getFieldPosition().toString());
   }
 
   // Returns true when the command should end.
