@@ -9,6 +9,7 @@ import static frc.robot.Constants.OIConstants.*;
 import java.util.Map;
 
 import frc.robot.commands.AlignWithNode;
+import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveForDistanceInDirection;
@@ -135,7 +136,7 @@ public class RobotContainer {
     m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, 22 / kInchesToMeters));
     m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, -22 / kInchesToMeters));
     // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
-    m_driverController.povUp().whileTrue(new AlignWithNode(m_drivetrain, 2));
+    m_driverController.povUp().whileTrue(new AlignWithTag(m_drivetrain, 2));
     // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));
     
     m_driverController.a().onTrue(new InstantCommand(() -> m_drivetrain.limelightToTagMode()));

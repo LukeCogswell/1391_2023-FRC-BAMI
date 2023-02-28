@@ -13,7 +13,7 @@ import static frc.robot.Constants.SwerveModuleConstants.PID.*;
 public class AlignWithTag extends CommandBase {
   private Drivetrain m_drivetrain;
   private Integer node;
-  private PIDController yController = new PIDController(kDriveP, kDriveI, kDriveD);
+  private PIDController yController = new PIDController(0.05, kDriveI, kDriveD);
   private PIDController xController = new PIDController(kDriveP, kDriveI, kDriveD);
   private PIDController turnController = new PIDController(0.05, kSteerI, kSteerD);
 
@@ -56,7 +56,7 @@ public class AlignWithTag extends CommandBase {
       return;
     }
 
-    xController.setSetpoint(2);
+    xController.setSetpoint(1.85);
     turnController.setSetpoint(0.0);
     yController.setSetpoint(0.0);
   }
@@ -69,7 +69,7 @@ public class AlignWithTag extends CommandBase {
     var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getRadians());
     rot = MathUtil.clamp(rot, -1, 1);
     xDrive = MathUtil.clamp(xDrive, -1.4, 1.4);
-    yDrive = MathUtil.clamp(yDrive, -1.4, 1.4);
+    yDrive = MathUtil.clamp(yDrive, -0.3, 0.3);
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }
 

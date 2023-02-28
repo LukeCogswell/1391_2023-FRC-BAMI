@@ -85,11 +85,6 @@ public class DriveWithJoysticks extends CommandBase {
     m_ySpeed =
       -m_yLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_x.getAsDouble(), 2) * Math.signum(m_x.getAsDouble()), kDriveDeadband))
       * kMaxSpeedMetersPerSecond * kSpeedMultiplier * m_precisionFactor;
-
-    if (DriverStation.getAlliance() == Alliance.Blue) {
-      m_ySpeed = -m_ySpeed;
-      m_xSpeed = -m_xSpeed;
-    }
     
     if(m_PIDcontrol) {
       // PID control

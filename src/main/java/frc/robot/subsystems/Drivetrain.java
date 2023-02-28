@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -236,7 +237,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    
+    SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
@@ -244,7 +245,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void updateOdometryIfTag() {
       if (getTV() == 1 && getTID() < 4 || getTID() > 5 &&  getTID() < 9 && isDetectingAprilTags()) {
-        var newPos = getRobotPoseFromAprilTag();
+        var newPos = new Pose2d(getRobotPoseFromAprilTag().getTranslation(), getFieldPosition().getRotation());
         if (oldPos != newPos) {
           setOdometry(newPos);
         }

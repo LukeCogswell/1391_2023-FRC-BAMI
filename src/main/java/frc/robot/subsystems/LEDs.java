@@ -60,8 +60,8 @@ public class LEDs extends SubsystemBase {
       m_ledBuffer.setLED((33 + ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
       m_ledBuffer.setLED((32 - ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
       if(((int) (Timer.getFPGATimestamp() * speed + i) % 16) < 8) {
-        m_ledBuffer.setLED(((8 + (int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
-        m_ledBuffer.setLED((7 - ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+        m_ledBuffer.setLED(((9 + (int) (Timer.getFPGATimestamp() * speed + 8 + i) % 8) - 1), color);
+        m_ledBuffer.setLED((8 - ((int) (Timer.getFPGATimestamp() * speed + 8 + i) % 8)), color);
       } else {
         for (var x = 0; x < 16; x++) {
           m_ledBuffer.setLED(x, kAllianceColor);

@@ -81,7 +81,7 @@ public final class Constants {
   }
 
   public static final class SwerveModuleConstants {
-    public static final double kSpeedMultiplier = 0.8; // limits robot speed
+    public static final double kSpeedMultiplier = 1; // limits robot speed
     public static final double kDriveDeadband = 0.05;
 
     public static final double kMaxVoltage = 12.0;
