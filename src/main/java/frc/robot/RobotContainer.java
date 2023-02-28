@@ -67,7 +67,7 @@ public class RobotContainer {
 
 
     phCompressor.enableDigital();
-    
+
     ShuffleboardLayout ArmControl = Shuffleboard.getTab("Commands")
     .getLayout("Gate", BuiltInLayouts.kList)
     .withSize(2,3)
@@ -173,8 +173,8 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)));
         
     m_driverController.back()
-    .onTrue(new InstantCommand(() -> 
-    m_intake.SetCollector(2, 0.9)))
+    .onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(new WaitCommand(0.12)).andThen(new InstantCommand(() -> 
+    m_intake.SetCollector(0, -0.9))))
     .onFalse(new InstantCommand(() -> 
     m_intake.SetCollector(0, 0.0)));
         

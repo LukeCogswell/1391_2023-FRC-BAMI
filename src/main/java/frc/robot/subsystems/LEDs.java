@@ -5,11 +5,13 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,16 +19,22 @@ public class LEDs extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(0);
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(48);
   public Boolean intaking = false;
-  private Color kAllianceColor = DriverStation.getAlliance() == Alliance.Red ? Color.kFirstRed : Color.kBlue;
+  public Boolean isTeamSet = false;
+  private Color kAllianceColor;
   /** Creates a new LEDs. */
   public LEDs() {
     m_led.setLength(48);
-    setLEDS(kAllianceColor);
   }
   
   @Override
   public void periodic() {
-    if (intaking) {
+    if (Timer.getFPGATimestamp() > 0.2 && !isTeamSet)  {
+      kAllianceColor  = (DriverStation.getAlliance() == Alliance.Red) ? Color.kDarkRed : Color.kBlue;
+      isTeamSet = true;
+      setLEDS(kAllianceColor);
+    }
+    SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
+    if (intaking && isTeamSet) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
         // Sets the specified LED to the RGB values for red
         m_ledBuffer.setLED(i, kAllianceColor);
@@ -39,18 +47,26 @@ public class LEDs extends SubsystemBase {
   }
 
   public void setIntakeBlock(Color color, Integer size, Double speed) {
-    if ((int) ((Timer.getFPGATimestamp() * speed) % 16) < size) {
-      for (var i = 0; i < 16; i++) {
-        m_ledBuffer.setLED(i, color);
-      }
-    } else {
-      for (var i = 0; i < 16; i++) {
-        m_ledBuffer.setLED(i, kAllianceColor);
-      }
-    }
+    // if ((int) ((Timer.getFPGATimestamp() * speed) % 16) < size) {
+      // for (var i = 0; i < 16; i++) {
+        // m_ledBuffer.setLED(i, color);
+      // }
+    // } else {
+      // for (var i = 0; i < 16; i++) {
+        // m_ledBuffer.setLED(i, kAllianceColor);
+      // }
+    // }
     for (var i = 0; i < size; i++) {
       m_ledBuffer.setLED((33 + ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
       m_ledBuffer.setLED((32 - ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+      if(((int) (Timer.getFPGATimestamp() * speed + i) % 16) < 8) {
+        m_ledBuffer.setLED(((8 + (int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+        m_ledBuffer.setLED((7 - ((int) (Timer.getFPGATimestamp() * speed + i) % 16) - 1), color);
+      } else {
+        for (var x = 0; x < 16; x++) {
+          m_ledBuffer.setLED(x, kAllianceColor);
+        }
+      }
     }
   }
 
