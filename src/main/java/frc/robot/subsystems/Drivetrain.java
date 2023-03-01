@@ -177,6 +177,15 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.stop();
   }
 
+  public void xPose() {
+    SwerveModuleState frontLeft = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState frontRight = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
+    SwerveModuleState backLeft = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
+    SwerveModuleState backRight = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState[] swerveModuleStates = {frontLeft, frontRight, backLeft, backRight};
+    setModuleStates(swerveModuleStates);
+  }
+
   public void drive(double xSpeed, double ySpeed, double rot) {
     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
         ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -207,10 +216,10 @@ public class Drivetrain extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);
 
-    m_frontLeft.setDesiredState(states[0]);
-    m_frontRight.setDesiredState(states[1]);
-    m_backLeft.setDesiredState(states[2]);
-    m_backRight.setDesiredState(states[3]);
+    m_frontLeft.setDesiredStateClosed(states[0]);
+    m_frontRight.setDesiredStateClosed(states[1]);
+    m_backLeft.setDesiredStateClosed(states[2]);
+    m_backRight.setDesiredStateClosed(states[3]);
   }
 
   public Command getCommandForTrajectory(PathPlannerTrajectory trajectory) {
