@@ -71,17 +71,17 @@ public class SwerveModule extends SubsystemBase {
     m_modulePosition = new SwerveModulePosition();
   
     m_steerPIDController = m_steerMotor.getPIDController();
-    m_steerPIDController.setP(kSteerP);
-    m_steerPIDController.setI(kSteerI);
-    m_steerPIDController.setD(kSteerD);
+      m_steerPIDController.setP(kSteerP);
+      m_steerPIDController.setI(kSteerI);
+      m_steerPIDController.setD(kSteerD);
     m_steerPIDController.setPositionPIDWrappingEnabled(true);
-    m_steerPIDController.setPositionPIDWrappingMaxInput(360);
-    m_steerPIDController.setPositionPIDWrappingMinInput(0);
+      m_steerPIDController.setPositionPIDWrappingMaxInput(360);
+      m_steerPIDController.setPositionPIDWrappingMinInput(0);
 
     m_drivePIDController = m_driveMotor.getPIDController();
-    m_drivePIDController.setP(kModDriveP);
-    m_drivePIDController.setI(kModDriveI);
-    m_drivePIDController.setD(kModDriveD);
+      m_drivePIDController.setP(kModDriveP);
+      m_drivePIDController.setI(kModDriveI);
+      m_drivePIDController.setD(kModDriveD);
     m_drivePIDController.setPositionPIDWrappingEnabled(false);
 
     m_driveMotor.burnFlash();
