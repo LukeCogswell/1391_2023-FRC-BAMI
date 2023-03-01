@@ -101,6 +101,10 @@ public final class Constants {
       public static final double kSteerI = 0.0; // Used in module control
       public static final double kSteerD = 0.0;
 
+      public static final double kModDriveP = 0.1;
+      public static final double kModDriveI = 0.0; // Used in module control TODO: Tune post-competition
+      public static final double kModDriveD = 0.0;
+
       public static final double kDriveP = 5.0;
       public static final double kDriveI = 0.0; // Used in pose control
       public static final double kDriveD = 0.0;

@@ -33,6 +33,7 @@ public class SwerveModule extends SubsystemBase {
   private final CANCoder m_steerEncoder;
 
   private final SparkMaxPIDController m_steerPIDController;
+  private final SparkMaxPIDController m_drivePIDController;
 
   private final double m_steerEncoderOffset;
 
@@ -77,6 +78,12 @@ public class SwerveModule extends SubsystemBase {
     m_steerPIDController.setPositionPIDWrappingMaxInput(360);
     m_steerPIDController.setPositionPIDWrappingMinInput(0);
 
+    m_drivePIDController = m_driveMotor.getPIDController();
+    m_drivePIDController.setP(kModDriveP);
+    m_drivePIDController.setI(kModDriveI);
+    m_drivePIDController.setD(kModDriveD);
+    m_drivePIDController.setPositionPIDWrappingEnabled(false);
+
     m_driveMotor.burnFlash();
     m_steerMotor.burnFlash();
   }
@@ -116,13 +123,16 @@ public class SwerveModule extends SubsystemBase {
     m_steerRelativeEncoder.setPosition(m_steerEncoder.getAbsolutePosition()); // sets relative encoder to absolute encoder's value
   }
 
-  public void setDesiredState(SwerveModuleState state) {
-    // System.out.println("Pre Optimize: " + state.speedMetersPerSecond);
+  public void setDesiredStateClosed(SwerveModuleState state) { // sets the desired state of the module (closed loop)
     state = SwerveModuleState.optimize(state, getSteerAngle());
-    // System.out.println("Post Optimize: " + state.speedMetersPerSecond);
-    // System.out.println("Setting: " + (state.speedMetersPerSecond / kMaxSpeedMetersPerSecond));
+    m_steerPIDController.setReference(state.angle.getDegrees() + m_steerEncoderOffset, CANSparkMax.ControlType.kPosition);
+    m_drivePIDController.setReference(state.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
+  }
+
+  public void setDesiredStateOpen(SwerveModuleState state) { // sets the desired state of the module (open loop)
+    state = SwerveModuleState.optimize(state, getSteerAngle());
+    m_steerPIDController.setReference(state.angle.getDegrees() + m_steerEncoderOffset, CANSparkMax.ControlType.kPosition);
     m_driveMotor.set(state.speedMetersPerSecond / kMaxSpeedMetersPerSecond);
-    m_steerPIDController.setReference(state.angle.getDegrees(), CANSparkMax.ControlType.kPosition);
   }
   
   private void setMotorSettings(CANSparkMax motor, int currentLimit) {
