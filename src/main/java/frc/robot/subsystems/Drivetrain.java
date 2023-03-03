@@ -177,6 +177,15 @@ public class Drivetrain extends SubsystemBase {
     m_backRight.stop();
   }
 
+  public void xPose() {
+    SwerveModuleState frontLeft = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState frontRight = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
+    SwerveModuleState backLeft = new SwerveModuleState(0, Rotation2d.fromDegrees(315));
+    SwerveModuleState backRight = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState[] swerveModuleStates = {frontLeft, frontRight, backLeft, backRight};
+    setModuleStates(swerveModuleStates);
+  }
+
   public void drive(double xSpeed, double ySpeed, double rot) {
     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
         ChassisSpeeds.fromFieldRelativeSpeeds(
