@@ -1,0 +1,99 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.7634809592015757,
+        "y": 4.96
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7634809592015785,
+        "y": 4.96
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.703598799494318,
+        "y": 4.5170058956380394
+      },
+      "prevControl": {
+        "x": 3.4330578218931036,
+        "y": 4.551312269528961
+      },
+      "nextControl": {
+        "x": 3.4330578218931036,
+        "y": 4.551312269528961
+      },
+      "holonomicAngle": -9.211026540816741,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.072238324219872,
+        "y": 4.34547402618343
+      },
+      "prevControl": {
+        "x": 2.6211403064746217,
+        "y": 4.3797804000743525
+      },
+      "nextControl": null,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.5236363636363629,
+      "names": [
+        "Collect"
+      ]
+    },
+    {
+      "position": 1.1781818181818253,
+      "names": [
+        "IntakeUp"
+      ]
+    },
+    {
+      "position": 1.4545454545454097,
+      "names": [
+        "Transfer"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "HoldArm"
+      ]
+    }
+  ]
+}

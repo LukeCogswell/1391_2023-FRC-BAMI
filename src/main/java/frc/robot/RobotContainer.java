@@ -16,6 +16,7 @@ import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
 import frc.robot.commands.ThrowCube;
+import edu.wpi.first.cscore.VideoCamera;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,7 +25,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -45,6 +48,7 @@ import static frc.robot.Constants.MeasurementConstants.*;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  public VideoCamera driverCam;
   Color kYellow = new Color(202, 198, 47);
   Compressor phCompressor = new Compressor(30, PneumaticsModuleType.REVPH);
   // private final ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
@@ -62,9 +66,20 @@ public class RobotContainer {
   private final CommandXboxController m_operatorController =
       new CommandXboxController(kOperatorControllerPort);
 
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final ShuffleboardTab matchTab = Shuffleboard.getTab("Matches");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
+    
+    matchTab.add("Autonomous Choice", autoChooser)
+    .withPosition(0,0)
+    .withSize(2,2);
+    
+    
+    autoChooser.setDefaultOption("1GP Mobility", Autos.OneGPMobility(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("1GPBalance Charge Station", Autos.OneGPBalance(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2GP Side", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    // autoChooser.addOption("2GP", Autos.TwoGP(m_drivetrain, m_arm, m_intake, m_LEDs));
 
 
     phCompressor.enableDigital();
@@ -105,7 +120,8 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(), 
         () -> m_driverController.getRightX(), 
         () -> m_driverController.getRightTriggerAxis(), 
-        m_driverController.start()
+        m_driverController.start(),
+        m_driverController.b()
         )
     );
 
@@ -127,11 +143,6 @@ public class RobotContainer {
   private void configureBindings() {
     
     /*************DRIVER CONTROLLER***********/
-    
-    m_driverController.x().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kPurple))
-    .andThen(new WaitCommand(5).andThen(new InstantCommand(() -> m_LEDs.setLEDS(Color.kRed)))));
-    m_driverController.y().onTrue(new InstantCommand(() -> m_LEDs.setLEDS(Color.kGold))
-    .andThen(new WaitCommand(5).andThen(new InstantCommand(() -> m_LEDs.setLEDS(Color.kRed)))));
     
     m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, 22 / kInchesToMeters));
     m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, -22 / kInchesToMeters));
@@ -183,18 +194,16 @@ public class RobotContainer {
       
     m_driverController.y()
     .onTrue(new InstantCommand(
-      () -> m_LEDs.setLEDS(Color.kPurple)
-      )
+      () -> m_LEDs.setCone())
     .andThen(new WaitCommand(5).andThen(
-      () -> m_LEDs.setLEDS(Color.kBlack)
+      () -> m_LEDs.setSignal(Color.kBlack)
     )));
 
     m_driverController.x()
     .onTrue(new InstantCommand(
-      () -> m_LEDs.setLEDS(Color.kPurple), m_LEDs
-      )
+      () -> m_LEDs.setCube())
     .andThen(new WaitCommand(5).andThen(
-      () -> m_LEDs.setLEDS(Color.kBlack)
+      () -> m_LEDs.setSignal(Color.kBlack)
     )));
 
 
@@ -204,9 +213,9 @@ public class RobotContainer {
 
     m_operatorController.y().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
-      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1.5)).andThen(
-      new ArmToAngles(m_arm, 20.0, 150.0, true, 0.15).withTimeout(1.5).andThen(
-      new ArmToAngles(m_arm, 36.0, 154.0, true, 0.12)))); //Score High
+      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1)).andThen(
+      new ArmToAngles(m_arm, 20.0, 155.0, true, 0.15).withTimeout(1)).andThen(
+      new ArmToAngles(m_arm, 35.0, 155.0, true, 0.12))); //Score High
 
     m_operatorController.b().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
@@ -221,7 +230,7 @@ public class RobotContainer {
       .whileTrue(
         new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(
         new WaitCommand(0.5)).andThen(
-        new ArmToAngles(m_arm, 4.2, -11.2, false, 0.15)));
+        new ArmToAngles(m_arm, 4.0, -10.6, false, 0.15))); // 4.2, -12.6
           // new WaitCommand(0.2)).andThen(
           //   new InstantCommand(() -> m_intake.PivotIn(false))).andThen(
           //     new WaitCommand(0.5)).andThen(
@@ -260,6 +269,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Autos.OneGPBalance(m_drivetrain, m_arm, m_intake, m_LEDs);
+    return autoChooser.getSelected();
   }
 }

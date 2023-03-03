@@ -82,6 +82,7 @@ public final class Constants {
 
   public static final class SwerveModuleConstants {
     public static final double kSpeedMultiplier = 1; // limits robot speed
+    public static final double kRotationSpeedMultiplier = 0.7;
     public static final double kDriveDeadband = 0.05;
 
     public static final double kMaxVoltage = 12.0;
@@ -100,6 +101,10 @@ public final class Constants {
       public static final double kSteerP = 0.01;
       public static final double kSteerI = 0.0; // Used in module control
       public static final double kSteerD = 0.0;
+
+      public static final double kModDriveP = 0.18;
+      public static final double kModDriveI = 0.0; // Used in module control TODO: Tune post-competition
+      public static final double kModDriveD = 0.0;
 
       public static final double kDriveP = 5.0;
       public static final double kDriveI = 0.0; // Used in pose control

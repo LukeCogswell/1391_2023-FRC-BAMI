@@ -27,7 +27,7 @@ public class DriveWithJoysticks extends CommandBase {
   DoubleSupplier m_y;
   DoubleSupplier m_theta;
   DoubleSupplier m_precision;
-  Trigger m_faceForwards;
+  Trigger m_faceForwards, fieldRelative;
   
   boolean m_PIDcontrol;
   
@@ -44,7 +44,7 @@ public class DriveWithJoysticks extends CommandBase {
   private final SlewRateLimiter m_thetaLimiter = new SlewRateLimiter(1 / kAccelerationSeconds);
   /** Creates a new Drive. */
   public DriveWithJoysticks(
-      Drivetrain drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, DoubleSupplier precision, Trigger faceForwards) {
+      Drivetrain drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, DoubleSupplier precision, Trigger faceForwards, Trigger isfieldRelative) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drivetrain = drivetrain;
 
@@ -54,6 +54,7 @@ public class DriveWithJoysticks extends CommandBase {
     m_y = y;
     m_theta = theta;
     m_precision = precision;
+    fieldRelative = isfieldRelative;
 
     turnController.enableContinuousInput(-180, 180);
 
@@ -95,10 +96,10 @@ public class DriveWithJoysticks extends CommandBase {
       // Joystick control
       m_thetaSpeed =
         -m_thetaLimiter.calculate(MathUtil.applyDeadband(Math.pow(m_theta.getAsDouble(), 2) * Math.signum(m_theta.getAsDouble()), kDriveDeadband))
-        * kMaxAngularSpeedRadiansPerSecond * kSpeedMultiplier * m_precisionFactor;
+        * kMaxAngularSpeedRadiansPerSecond * kSpeedMultiplier * kRotationSpeedMultiplier * m_precisionFactor;
     }
 
-    m_drivetrain.drive(m_xSpeed, m_ySpeed, m_thetaSpeed, true);
+    m_drivetrain.drive(m_xSpeed, m_ySpeed, m_thetaSpeed, !fieldRelative.getAsBoolean());
   }
 
   // Called once the command ends or is interrupted.

@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
   private CANSparkMax rMotor = new CANSparkMax(kRightCollectorMotorID, MotorType.kBrushless);
   /** Creates a new Intake. */
   public Intake() {
-    collectionPiston.set(kReverse);
+    // collectionPiston.set(kReverse);
     extensionPiston.set(kForward);
   }
 
@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
 
   public void CollectorOut(Boolean tf, LEDs LEDS) {
     extensionPiston.set(tf ? kReverse : kForward);
-    LEDS.intaking(tf);
+    // LEDS.intaking(tf);
   }
   
   public void PivotIn(Boolean tf) {

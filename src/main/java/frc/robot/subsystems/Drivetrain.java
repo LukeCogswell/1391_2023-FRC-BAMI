@@ -207,10 +207,10 @@ public class Drivetrain extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);
 
-    m_frontLeft.setDesiredState(states[0]);
-    m_frontRight.setDesiredState(states[1]);
-    m_backLeft.setDesiredState(states[2]);
-    m_backRight.setDesiredState(states[3]);
+    m_frontLeft.setDesiredStateOpen(states[0]);
+    m_frontRight.setDesiredStateOpen(states[1]);
+    m_backLeft.setDesiredStateOpen(states[2]);
+    m_backRight.setDesiredStateOpen(states[3]);
   }
 
   public Command getCommandForTrajectory(PathPlannerTrajectory trajectory) {
@@ -237,7 +237,8 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    SmartDashboard.putNumber("TX", getTX());
+   SmartDashboard.putNumber("TA", getTA()); 
+    // SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
@@ -266,6 +267,10 @@ public class Drivetrain extends SubsystemBase {
 
   public double getTX() {
     return limelightTable.getEntry("tx").getDouble(0);
+  }
+
+  public double getTA() {
+    return limelightTable.getEntry("ta").getDouble(0);
   }
 
   public boolean isDetectingAprilTags() {
