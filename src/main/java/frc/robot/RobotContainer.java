@@ -12,6 +12,7 @@ import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.Autos;
+import frc.robot.commands.BalanceRobotOnChargingStation;
 import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -184,11 +186,16 @@ public class RobotContainer {
         
     m_driverController.a().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)));
         
-    m_driverController.back()
-    .onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(new WaitCommand(0.12)).andThen(new InstantCommand(() -> 
-    m_intake.SetCollector(0, -0.9))))
-    .onFalse(new InstantCommand(() -> 
-    m_intake.SetCollector(0, 0.0)));
+    m_driverController.back().onTrue(
+      new InstantCommand(() -> m_intake.CollectorOut(true, m_LEDs)).andThen(
+        new WaitCommand(0.5)
+      ).andThen(
+      new InstantCommand(() -> m_intake.SetCollector(0, -0.2)).andThen(
+      new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))));
+    // .onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(new WaitCommand(0.12)).andThen(new InstantCommand(() -> 
+    // m_intake.SetCollector(0, -0.9))))
+    // .onFalse(new InstantCommand(() -> 
+    // m_intake.SetCollector(0, 0.0)));
         
     /******************LED CONTROL***************/
       
@@ -206,6 +213,7 @@ public class RobotContainer {
       () -> m_LEDs.setSignal(Color.kBlack)
     )));
 
+    m_driverController.start().whileTrue(new BalanceRobotOnChargingStation(m_drivetrain, () -> 2));
 
     /*************OPERATOR CONTROLLER*****************/
             
@@ -230,7 +238,7 @@ public class RobotContainer {
       .whileTrue(
         new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(
         new WaitCommand(0.5)).andThen(
-        new ArmToAngles(m_arm, 4.0, -10.6, false, 0.15))); // 4.2, -12.6
+        new ArmToAngles(m_arm, 2.0, -11.5, false, 0.15))); // 4.2, -12.6
           // new WaitCommand(0.2)).andThen(
           //   new InstantCommand(() -> m_intake.PivotIn(false))).andThen(
           //     new WaitCommand(0.5)).andThen(
@@ -239,21 +247,21 @@ public class RobotContainer {
                 
     m_operatorController.povDown().whileTrue(
       new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
-      new ArmToAngles(m_arm, 3.0, 0.0, true, 0.3))); // go to zero(straight up and down)
+      new ArmToAngles(m_arm, 3.0, 0.0, true, 0.2))); // go to zero(straight up and down)
     
       m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
     
     m_operatorController.povRight().onTrue(new InstantCommand(() -> m_arm.GrabGp(false)));
     m_operatorController.povLeft().onTrue(new InstantCommand(() -> m_arm.GrabGp(true)));
     
-    m_operatorController.rightTrigger()
-    .onTrue(new ArmToAngles(
-        m_arm, 
-        m_arm.getShoulderAngle(), 
-        m_arm.getElbowAngle() - 1.0,
-        true, 0.2
-      ).withTimeout(0.3))
-    .onFalse(new ArmToAngles(m_arm, 0.0, m_arm.getElbowAngle(), false, 0.2));
+    // m_operatorController.rightTrigger()
+    // .whileTrue(new SequentialCommandGroup(
+    //   new InstantCommand(() -> m_arm.GrabGp(true)),
+    //   new WaitCommand(0.2),
+    //   new InstantCommand(() -> m_intake.PivotIn(false)),
+    //   new ArmToAngles(m_arm, 12.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(0.5),
+    //   new ArmToAngles(m_arm, 10.0, 0.0, true, 0.2)
+    //   ));
 
     
     m_operatorController.start()

@@ -81,8 +81,8 @@ public final class Autos {
     return Commands.sequence(
       new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 1.81, 2.2, new Rotation2d(0.0)))),
       new ArmToAngles(arm, -8.0, 90.0, true, 0.15).withTimeout(1.5),
-      new ArmToAngles(arm, 20.0, 150.0, true, 0.15).withTimeout(1),
-      new ArmToAngles(arm, 36.0, 154.0, true, 0.1).withTimeout(1.5), //Score High
+      new ArmToAngles(arm, 20.0, 155.0, true, 0.15).withTimeout(1),
+      new ArmToAngles(arm, 36.0, 155.0, true, 0.1).withTimeout(1.5), //Score High
       new InstantCommand(() -> arm.GrabGp(false)),
       new WaitCommand(0.1),
       new ArmToAngles(arm, -8.0, 90.0, false, 0.2).withTimeout(1),
@@ -94,7 +94,7 @@ public final class Autos {
         new ArmToAngles(arm, 3.0, 0.0, true, 0.2),
         new SequentialCommandGroup(
           new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPath), AutoPath.getMarkers(), Constants.AUTO_EVENT_MAP),
-          new BalanceRobotOnChargingStation(drivetrain, () -> 0.3)
+          new BalanceRobotOnChargingStation(drivetrain, () -> 0.4)
       ))
     );
   }
@@ -157,7 +157,7 @@ public final class Autos {
         if (DriverStation.getAlliance() == Alliance.Red) drivetrain.setOdometry(new Pose2d( 1.77, kFieldY - 4.96, new Rotation2d(0)));
       }),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPath), AutoPath.getMarkers(), Constants.AUTO_EVENT_MAP),
-      new AlignWithTag(drivetrain, 2).withTimeout(1.5),
+      new AlignWithTag(drivetrain, 2).withTimeout(1.8),
       new ArmToAngles(arm, -8.0, 90.0, true, 0.15).withTimeout(1),
       new ArmToAngles(arm, 20.0, 154.0, true, 0.15).withTimeout(0.8),
       new ArmToAngles(arm, 36.0, 154.0, true, 0.1).withTimeout(1), //Score High
