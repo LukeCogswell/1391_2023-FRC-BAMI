@@ -11,6 +11,7 @@ import java.util.Map;
 import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
+import frc.robot.commands.ArmToPos;
 import frc.robot.commands.Autos;
 import frc.robot.commands.BalanceRobotOnChargingStation;
 import frc.robot.commands.DriveForDistanceInDirection;
@@ -87,20 +88,14 @@ public class RobotContainer {
     phCompressor.enableDigital();
 
     ShuffleboardLayout ArmControl = Shuffleboard.getTab("Commands")
-    .getLayout("Gate", BuiltInLayouts.kList)
+    .getLayout("Arm IK", BuiltInLayouts.kList)
     .withSize(2,3)
     .withPosition(4,4)
     .withProperties(Map.of("Label Position", "LEFT"));
     GenericEntry armXEntry = 
-      ArmControl.add("X Pos", 5.0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0.0, "max", 50.0))
-        .getEntry();  
+      ArmControl.add("X Pos", 5.0).getEntry();  
     GenericEntry armYEntry = 
-      ArmControl.add("Y Pos", 8.0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 5.0, "max", 50.0))
-        .getEntry();  
+      ArmControl.add("Y Pos", 8.0).getEntry();  
     SuppliedValueWidget elbowAngle =
       ArmControl.addNumber("Elbow", 
       () -> m_arm.getIKElbow(
@@ -113,9 +108,19 @@ public class RobotContainer {
         armXEntry.getDouble(5.0),
         armYEntry.getDouble(8.0)));
     
+    SuppliedValueWidget elbowAng =
+      Shuffleboard.getTab("Commands").addNumber("Elbow Angle", () -> m_arm.getElbowAngle());
+      
+    SuppliedValueWidget shoulderAng =
+      Shuffleboard.getTab("Commands").addNumber("Shoulder Angle", () -> m_arm.getShoulderAngle());
 
+    SuppliedValueWidget armXPos =
+      Shuffleboard.getTab("Commands").addString("Grabber X Position", () -> m_arm.getFKArmPos()[0].toString());
+    
+    SuppliedValueWidget armYPos =
+      Shuffleboard.getTab("Commands").addString("Grabber Y Position", () -> m_arm.getFKArmPos()[1].toString());
 
-    m_drivetrain.setDefaultCommand(
+      m_drivetrain.setDefaultCommand(
       new DriveWithJoysticks(
         m_drivetrain, 
         () -> m_driverController.getLeftX(), 
@@ -130,7 +135,8 @@ public class RobotContainer {
  
     // Configure the trigger bindings  
     configureBindings();
-    m_arm.setDefaultCommand(new HoldArm(m_arm, m_operatorController));
+    // m_arm.setDefaultCommand(new HoldArm(m_arm, m_operatorController));
+    m_arm.setDefaultCommand(new ArmToPos(m_arm, 4.0, 8.0, m_operatorController));
   }
 
   /**
@@ -263,6 +269,7 @@ public class RobotContainer {
     //   new ArmToAngles(m_arm, 10.0, 0.0, true, 0.2)
     //   ));
 
+    m_operatorController.rightTrigger().whileTrue(new ArmToPos(m_arm, 30.0, 30.0, m_operatorController));
     
     m_operatorController.start()
       .onTrue(new InstantCommand(() -> m_intake.PivotIn(false))) // backwards
