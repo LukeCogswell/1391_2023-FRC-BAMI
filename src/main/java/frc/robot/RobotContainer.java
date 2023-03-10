@@ -252,8 +252,8 @@ public class RobotContainer {
           //       ) );
                 
     m_operatorController.povDown().whileTrue(
-      new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
-      new ArmToAngles(m_arm, 3.0, 0.0, true, 0.2))); // go to zero(straight up and down)
+      new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), false, 0.2).withTimeout(1).andThen(
+      new ArmToAngles(m_arm, 3.0, 0.0, false, 0.2))); // go to zero(straight up and down)
     
       m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
     
