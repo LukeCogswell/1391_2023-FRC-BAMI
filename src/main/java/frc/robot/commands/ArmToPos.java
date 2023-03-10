@@ -12,6 +12,8 @@ import static frc.robot.Constants.ArmConstants.PID.*;
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class ArmToPos extends CommandBase {
   private Arm m_arm;
   private Double targetShoulderAngle, targetElbowAngle, targetXPos, targetYPos;
@@ -75,17 +77,31 @@ public class ArmToPos extends CommandBase {
     var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
     var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
     
-    elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
-    shoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);
-    
+    var clampedElbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
+    var clampedShoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);
+    Boolean clampWorking = true;
+
+    if (Math.abs(clampedElbowSpeed) > kElbowMaxSpeed) {
+      clampWorking = false;
+      m_arm.setElbowMotors(Math.copySign(kElbowMaxSpeed, elbowSpeed));
+      SmartDashboard.putNumber("Given Clamped Elbow Speed", clampedElbowSpeed);
+    }
+    if (Math.abs(clampedShoulderSpeed) > kShoulderMaxSpeed) {
+      clampWorking = false;
+      m_arm.setShoulderMotors(Math.copySign(kShoulderMaxSpeed, shoulderSpeed));
+      SmartDashboard.putNumber("Given Clamped Shoulder Speed", clampedShoulderSpeed);
+    }
+
+    SmartDashboard.putBoolean("Clamp Working", clampWorking);
+
     // SAFETY IF
-    if(elbowSpeed >= -0.2 && elbowSpeed <= 0.2 && shoulderSpeed >= -0.2 && shoulderSpeed <= 0.2) {
+    // if(elbowSpeed >= -0.2 && elbowSpeed <= 0.2 && shoulderSpeed >= -0.2 && shoulderSpeed <= 0.2) {
         m_arm.setElbowMotors(elbowSpeed);
         m_arm.setShoulderMotors(-shoulderSpeed);
-    } else {
-        m_arm.setElbowMotors(0.0);
-        m_arm.setShoulderMotors(0.0);
-    }
+    // } else {
+    //     m_arm.setElbowMotors(0.0);
+    //     m_arm.setShoulderMotors(0.0);
+    // }
   }
 
   // Called once the command ends or is interrupted.
