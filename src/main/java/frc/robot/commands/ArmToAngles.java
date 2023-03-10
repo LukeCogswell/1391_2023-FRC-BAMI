@@ -33,7 +33,7 @@ public class ArmToAngles extends CommandBase {
     m_arm = arm;
     clampSpeed = clamp; // 0.15
     targetElbowAngle = elbowAngle > 165 || elbowAngle < -165 ? 0.0: elbowAngle;
-    targetShoulderAngle = shoulderAngle > 40 || shoulderAngle < -40 ? 0.0: shoulderAngle;
+    targetShoulderAngle = shoulderAngle > 36.5 || shoulderAngle < -36.5 ? 0.0: shoulderAngle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
   }
