@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.CANConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 import static frc.robot.Constants.ArmConstants.*;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
