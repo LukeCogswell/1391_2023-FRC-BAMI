@@ -42,7 +42,7 @@ public final class Constants {
     // This is based on the CAD model (divided by two to represent distance from center of robot) 
     public static final double kInchesToMeters = 39.37;
     public static final double kModuleXOffsetMeters = 21.5 / kInchesToMeters / 2; // 21.5 inches - distance between left and right wheels
-    public static final double kModuleYOffsetMeters = 18.5 / kInchesToMeters / 2; // 18.5 inches - distance between front and back wheels
+    public static final double kModuleYOffsetMeters = 21.5 / kInchesToMeters / 2; // 21.5 inches - distance between front and back wheels
     public static final double kWheelDiameterMeters = 0.10033; // 4 inches - diameter of the wheels
 
     public static final double kCameraOffsetX = 15 / kInchesToMeters;
@@ -131,8 +131,8 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final double kShoulderMaxAngle = 45; //degrees
-    public static final double kElbowMaxAngle = 130; //degrees
+    public static final double kShoulderMaxAngle = 36; //degrees
+    public static final double kElbowMaxAngle = 156; //degrees
 
 
     public static final double kShoulderMaxSpeed = 0.2;
