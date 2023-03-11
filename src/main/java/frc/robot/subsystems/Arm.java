@@ -8,8 +8,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.CANConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
-import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+import static frc.robot.Constants.ArmConstants.*;
 
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,11 +49,13 @@ public class Arm extends SubsystemBase {
   }
 
   public void setElbowMotors(Double speed) {
+    var safe = Math.abs(speed) < kElbowMaxSpeed ? true : new Error("Elbow speed outside of acceptable range");
     lElbowMotor.set(speed);
     rElbowMotor.set(speed);
   }
 
   public void setShoulderMotors(Double speed) {
+    var safe = Math.abs(speed) < kShoulderMaxSpeed ? true : new Error("Shoulder speed outside of acceptable range");
     lShoulderMotor.set(speed);
     rShoulderMotor.set(speed);
   }
@@ -76,7 +79,7 @@ public class Arm extends SubsystemBase {
           / (2 * kShoulderLength * hypoteneuse)
           )
         );
-    if (Math.abs(angle) > 35.6) return getShoulderAngle(); 
+    if (Math.abs(angle) > kShoulderMaxAngle) return getShoulderAngle(); 
     return angle;
   }
 
@@ -86,7 +89,7 @@ public class Arm extends SubsystemBase {
     var angle = Math.copySign((180 / Math.PI) * Math.acos(
       (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
     ), Math.signum(x));
-    if (Math.abs(angle) > 35.6) return getShoulderAngle();
+    if (Math.abs(angle) > kElbowMaxAngle) return getShoulderAngle();
     return angle;
 
   }
