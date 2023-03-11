@@ -86,18 +86,23 @@ public class ArmToPos extends CommandBase {
       m_arm.setElbowMotors(Math.copySign(kElbowMaxSpeed, elbowSpeed));
       SmartDashboard.putNumber("Given Clamped Elbow Speed", clampedElbowSpeed);
     }
+    else {
+       m_arm.setElbowMotors(clampedElbowSpeed);
+    }
     if (Math.abs(clampedShoulderSpeed) > kShoulderMaxSpeed) {
       clampWorking = false;
       m_arm.setShoulderMotors(Math.copySign(kShoulderMaxSpeed, shoulderSpeed));
       SmartDashboard.putNumber("Given Clamped Shoulder Speed", clampedShoulderSpeed);
+    } else {
+      m_arm.setShoulderMotors(-clampedShoulderSpeed);
     }
 
     SmartDashboard.putBoolean("Clamp Working", clampWorking);
 
     // SAFETY IF
     // if(elbowSpeed >= -0.2 && elbowSpeed <= 0.2 && shoulderSpeed >= -0.2 && shoulderSpeed <= 0.2) {
-        m_arm.setElbowMotors(elbowSpeed);
-        m_arm.setShoulderMotors(-shoulderSpeed);
+        // m_arm.setElbowMotors(elbowSpeed);
+        // m_arm.setShoulderMotors(-shoulderSpeed);
     // } else {
     //     m_arm.setElbowMotors(0.0);
     //     m_arm.setShoulderMotors(0.0);
