@@ -131,8 +131,8 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final double kShoulderMaxAngle = 36.5; //degrees
-    public static final double kElbowMaxAngle = 150; //degrees
+    public static final double kShoulderMaxAngle = 36; //degrees
+    public static final double kElbowMaxAngle = 156; //degrees
 
 
     public static final double kShoulderMaxSpeed = 0.2;
