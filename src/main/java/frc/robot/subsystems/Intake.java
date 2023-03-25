@@ -29,9 +29,8 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void CollectorOut(Boolean tf, LEDs LEDS) {
+  public void CollectorOut(Boolean tf) {
     extensionPiston.set(tf ? kReverse : kForward);
-    // LEDS.intaking(tf);
   }
   
   public void PivotIn(Boolean tf) {

@@ -49,7 +49,7 @@ public class AlignWithTag extends CommandBase {
     yController.setTolerance(0.5);
 
     if (node == 2) m_drivetrain.limelightToTagMode();
-    else m_drivetrain.limelightToTapeMode();
+    
 
     if (m_drivetrain.getTV() == 0) {
       this.cancel();

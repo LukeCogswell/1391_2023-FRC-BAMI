@@ -9,12 +9,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
 import static frc.robot.Constants.ArmConstants.PID.*;
-import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.MeasurementConstants.*;
 
 public class ArmToPos extends CommandBase {
   private Arm m_arm;
-  private Double targetShoulderAngle, targetElbowAngle, targetXPos, targetYPos;
+  private Double targetShoulderAngle, targetElbowAngle, targetXPos, targetYPos, originalXPos, originalYPos;
   private CommandXboxController controller;
 
   private PIDController shoulderController = new PIDController(kShoulderP, kShoulderI, kShoulderD);
@@ -22,6 +21,8 @@ public class ArmToPos extends CommandBase {
   /** Creates a new ArmToPos. */
   public ArmToPos(Arm arm, Double x, Double y, CommandXboxController Controller) {
     m_arm = arm;
+    originalXPos = x;
+    originalYPos = y;
     targetXPos = x;
     targetYPos = y;
     controller = Controller;
@@ -36,7 +37,7 @@ public class ArmToPos extends CommandBase {
   targetElbowAngle = m_arm.getIKElbow(targetXPos, targetYPos);
   targetShoulderAngle = m_arm.getIKShoulder(targetXPos, targetYPos);
   targetElbowAngle = targetElbowAngle > 155 || targetElbowAngle < -155 ? 0.0: targetElbowAngle;
-  targetShoulderAngle = targetShoulderAngle > 45 || targetShoulderAngle < -45 ? 0.0: targetShoulderAngle;
+  targetShoulderAngle = targetShoulderAngle > 35.6 || targetShoulderAngle < -35.6 ? 0.0: targetShoulderAngle;
   shoulderController.reset();
   elbowController.reset();
   elbowController.setSetpoint(targetElbowAngle);
@@ -51,14 +52,12 @@ public class ArmToPos extends CommandBase {
     if (Math.abs(controller.getLeftY()) > 0.2 || Math.abs(controller.getRightY()) > 0.2) {
         if (Math.abs(controller.getLeftY()) > 0.2) {
         var nextXPos = targetXPos - Math.copySign(0.2, controller.getLeftY());
-            // var nextXPos = targetXPos + 2;
         targetXPos = nextXPos > kMaxReach ? kMaxReach : nextXPos;
         targetXPos = nextXPos < -kMaxReach ? -kMaxReach : nextXPos;
         
         }
         if (Math.abs(controller.getRightY()) > 0.2) {
         var nextYPos = targetYPos - Math.copySign(0.2, controller.getRightY());
-        // var nextYPos = targetYPos + 2;
         targetYPos = nextYPos > kMaxHeight ? kMaxHeight : nextYPos;
         }
         targetElbowAngle = m_arm.getIKElbow(targetXPos, targetYPos);
@@ -75,8 +74,8 @@ public class ArmToPos extends CommandBase {
     var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
     var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
     
-    elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
-    shoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);
+    elbowSpeed = MathUtil.clamp(elbowSpeed, -0.2, 0.2);
+    shoulderSpeed = MathUtil.clamp(shoulderSpeed, -0.2, 0.2);
     
     // SAFETY IF
     if(elbowSpeed >= -0.2 && elbowSpeed <= 0.2 && shoulderSpeed >= -0.2 && shoulderSpeed <= 0.2) {
@@ -91,6 +90,10 @@ public class ArmToPos extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    if (interrupted) {
+        targetXPos = originalXPos;
+        targetYPos = originalYPos;
+    } 
     elbowController.close();
     shoulderController.close();
   }

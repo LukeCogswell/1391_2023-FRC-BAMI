@@ -16,8 +16,6 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class DriveWithJoysticks extends CommandBase {
 

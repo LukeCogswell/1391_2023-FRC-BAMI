@@ -18,7 +18,6 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
   private PIDController yController;
   private PIDController thetaController;
   
-  public DoubleArraySubscriber botPoseSub; 
+  public DoubleArraySubscriber botPoseSub, tagPoseSub; 
 
   public TrajectoryConfig config = new TrajectoryConfig(
       Constants.MeasurementConstants.kMaxSpeedMetersPerSecond / 2,
@@ -74,6 +73,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     teamColor = DriverStation.getAlliance();
     botPoseSub = limelightTable.getDoubleArrayTopic("botpose").subscribe(new double[]{});
+    tagPoseSub = limelightTable.getDoubleArrayTopic("targetpose_robotspace").subscribe(new double[]{});
 
     m_frontLeft = new SwerveModule(
         kFrontLeftDriveMotorID,
@@ -246,7 +246,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-   SmartDashboard.putNumber("TA", getTA()); 
+    SmartDashboard.putNumber("TA", getTA()); 
     // SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
@@ -306,6 +306,12 @@ public class Drivetrain extends SubsystemBase {
       var pose2d = new Pose2d(new Translation2d(entry[0], entry[1]), odometer.getPoseMeters().getRotation());
   
       return pose2d;
+  }
+
+  public double getRobotRotationFromAprilTag() {
+    var entry = limelightTable.getEntry("botpose").getDoubleArray(new double[]{getFieldPosition().getX(), getFieldPosition().getY()});
+    var rot2d = entry[5];
+    return rot2d;
   }
 
 }

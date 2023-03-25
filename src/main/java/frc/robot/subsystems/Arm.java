@@ -12,9 +12,7 @@ import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
@@ -66,29 +64,48 @@ public class Arm extends SubsystemBase {
     return new Double[]{xpos,ypos};
   }
 
+  public Double[] getFK(Double shoulderAngle, Double elbowAngle) {
+    var hypoteneuse = Math.sqrt(kShoulderLengthSquared + kElbowLengthSquared - (2 * kShoulderLength * kElbowLength * Math.cos(Math.PI / 180 * elbowAngle)));
+    var angleElbowShoulderGrabber = Math.acos((kShoulderLengthSquared + Math.pow(hypoteneuse, 2) - kElbowLengthSquared) / (2 * kShoulderLength * hypoteneuse));
+    var angleAxisShoulderGrabber = Math.PI / 2 - (shoulderAngle * Math.PI / 180) - angleElbowShoulderGrabber;
+    var xpos = hypoteneuse * (Math.cos(angleAxisShoulderGrabber));
+    var ypos = hypoteneuse * (Math.sin(angleAxisShoulderGrabber));
+    return new Double[]{xpos,ypos};
+  }
+
   public double getIKShoulder(Double x, Double y) {
+    if (y < 0) return getShoulderAngle();
     var x2 = Math.pow(x, 2);
     var y2 = Math.pow(y, 2);
     var hypoteneuse = Math.sqrt(x2 + y2);
-    var angle = 90 - (180/Math.PI) * (
+    Double angle = 90 - (180/Math.PI) * (
       Math.atan(y/Math.abs(x))  + Math.acos(
         (Math.pow(kShoulderLength, 2) + x2 + y2 - Math.pow(kElbowLength, 2)) 
           / (2 * kShoulderLength * hypoteneuse)
           )
         );
-    if (Math.abs(angle) > 35.6) return getShoulderAngle(); 
-    return angle;
+    if (angle.isNaN() || angle.isInfinite()) return getShoulderAngle();
+    else if (Math.abs(angle) < 35.6) return angle;
+    else if (angle > 35.6) return getShoulderAngle() - 2; 
+    else if (angle < -35.6) return getShoulderAngle() + 2; 
+    else return getShoulderAngle();
   }
 
   public double getIKElbow(Double x, Double y) {
+    if (y < 0) return getElbowAngle(); 
     var x2 = Math.pow(x, 2);
     var y2 = Math.pow(y, 2);
-    var angle = Math.copySign((180 / Math.PI) * Math.acos(
+    Double angle = Math.copySign((180 / Math.PI) * Math.acos(
       (Math.pow(kShoulderLength, 2) + Math.pow(kElbowLength, 2) - x2 - y2) / (2 * kShoulderLength * kElbowLength)
     ), Math.signum(x));
-    if (Math.abs(angle) > 35.6) return getShoulderAngle();
-    return angle;
 
+    if (angle.isNaN() || angle.isInfinite()) return getElbowAngle();
+    else if (Math.abs(angle) < 155.6) return angle;
+    else if (angle > 155.6) return getElbowAngle() - 2;
+    else if (angle < -155.6) return getElbowAngle() + 2;
+    else if (getElbowAngle() > 0) return getElbowAngle() - 2;
+    else if (getElbowAngle() < 0) return getElbowAngle() + 2;
+    else return getElbowAngle();
   }
 
 

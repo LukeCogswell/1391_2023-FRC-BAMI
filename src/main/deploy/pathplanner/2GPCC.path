@@ -24,16 +24,41 @@
     },
     {
       "anchorPoint": {
+        "x": 3.924782514329651,
+        "y": 0.5832083561456699
+      },
+      "prevControl": {
+        "x": 3.372720381674715,
+        "y": 0.5088778793820061
+      },
+      "nextControl": {
+        "x": 4.476844646984587,
+        "y": 0.6575388329093337
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": 0.8,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
         "x": 6.760776089312521,
         "y": 0.9034011791276062
       },
       "prevControl": {
-        "x": 3.2272195785475732,
-        "y": 0.7547402256002796
+        "x": 4.9997155629118675,
+        "y": 0.7890465994912005
       },
       "nextControl": {
-        "x": 3.2272195785475732,
-        "y": 0.7547402256002796
+        "x": 4.9997155629118675,
+        "y": 0.7890465994912005
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -49,12 +74,37 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7634809592015757,
-        "y": 1.052062132654934
+        "x": 3.879040682475088,
+        "y": 0.9034011791276062
       },
       "prevControl": {
-        "x": 3.341574158183979,
-        "y": 0.9948848428367312
+        "x": 4.702790624673187,
+        "y": 0.9034011791276062
+      },
+      "nextControl": {
+        "x": 3.433057821893104,
+        "y": 0.9034011791276062
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": 0.8,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.049367408292591,
+        "y": 1.0634975906185762
+      },
+      "prevControl": {
+        "x": 2.9298976714929172,
+        "y": 0.9605784689458102
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -72,19 +122,19 @@
   ],
   "markers": [
     {
-      "position": 0.7127272727272405,
+      "position": 1.4836363636363212,
       "names": [
         "Collect"
       ]
     },
     {
-      "position": 1.2363636363635992,
+      "position": 2.298181818181748,
       "names": [
         "IntakeUp"
       ]
     },
     {
-      "position": 1.3963636363635787,
+      "position": 2.5599999999999627,
       "names": [
         "Transfer"
       ]

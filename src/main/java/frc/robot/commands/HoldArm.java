@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
 import static frc.robot.Constants.ArmConstants.PID.*;
-import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.Constants.MeasurementConstants.*;
 
 public class HoldArm extends CommandBase {
   Arm m_arm;

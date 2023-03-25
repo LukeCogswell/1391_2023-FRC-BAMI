@@ -61,7 +61,7 @@ public final class Constants {
     public static final double kBackRightEncoderOffset = 22.06;// 27.8       9 
 
     public static final double kShoulderEncoderOffset = 348.9; // FIND THIS
-    public static final double kElbowEncoderOffset = -46.7; // FIND THIS
+    public static final double kElbowEncoderOffset = 14.05; // FIND THIS
     
     public static final double kShoulderLength = 42;
     public static final double kElbowLength = 34;
@@ -69,8 +69,11 @@ public final class Constants {
     public static final double kShoulderLengthSquared = kShoulderLength * kShoulderLength;
     public static final double kElbowLengthSquared = kElbowLength * kElbowLength;
 
-    public static final double kMaxReach = 50; //inches
-    public static final double kMaxHeight = 78; // 6'6"
+    public static final double kShoulderMaxSpeed = 0.25;
+    public static final double kElbowMaxSpeed = 0.5; 
+
+    public static final double kMaxReach = 56; //inches
+    public static final double kMaxHeight = 54;
 
     public static final double kMaxSpeedMetersPerSecond = 5880 / 60.0 *
       SwerveModuleConstants.kDriveReduction *
@@ -133,10 +136,6 @@ public final class Constants {
   public static final class ArmConstants {
     public static final double kShoulderMaxAngle = 45; //degrees
     public static final double kElbowMaxAngle = 130; //degrees
-
-
-    public static final double kShoulderMaxSpeed = 0.2;
-    public static final double kElbowMaxSpeed = 0.2;
 
     public static final class PID {
       public static final double kShoulderP = 0.016;

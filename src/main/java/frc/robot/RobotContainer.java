@@ -8,23 +8,19 @@ import static frc.robot.Constants.OIConstants.*;
 
 import java.util.Map;
 
-import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.ArmToPos;
 import frc.robot.commands.Autos;
-import frc.robot.commands.BalanceRobotOnChargingStation;
 import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
-import frc.robot.commands.ThrowCube;
+import frc.robot.commands.HoldArmAtPos;
 import edu.wpi.first.cscore.VideoCamera;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -81,7 +77,9 @@ public class RobotContainer {
     
     autoChooser.setDefaultOption("1GP Mobility", Autos.OneGPMobility(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("1GPBalance Charge Station", Autos.OneGPBalance(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2GP Charging Station", Autos.TwoGPBalanceCS(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2GP Side", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("3GP Non CC", Autos.ThreeGPNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     // autoChooser.addOption("2GP", Autos.TwoGP(m_drivetrain, m_arm, m_intake, m_LEDs));
 
 
@@ -127,7 +125,7 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(), 
         () -> m_driverController.getRightX(), 
         () -> m_driverController.getRightTriggerAxis(), 
-        m_driverController.start(),
+        new Trigger(() -> false),
         m_driverController.b()
         )
     );
@@ -135,8 +133,8 @@ public class RobotContainer {
  
     // Configure the trigger bindings  
     configureBindings();
-    // m_arm.setDefaultCommand(new HoldArm(m_arm, m_operatorController));
-    m_arm.setDefaultCommand(new ArmToPos(m_arm, 4.0, 8.0, m_operatorController));
+    m_arm.setDefaultCommand(new HoldArm(m_arm, m_operatorController));
+    // m_arm.setDefaultCommand(new HoldArmAtPos(m_arm, m_operatorController));
   }
 
   /**
@@ -152,59 +150,54 @@ public class RobotContainer {
     
     /*************DRIVER CONTROLLER***********/
     
-    m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, 22 / kInchesToMeters));
-    m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.0, -22 / kInchesToMeters));
-    // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 1));
+    m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, 22 / kInchesToMeters).andThen(
+      new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
+    m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, -22 / kInchesToMeters).andThen(
+      new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
+      
     m_driverController.povUp().whileTrue(new AlignWithTag(m_drivetrain, 2));
-    // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 3));
-    
-    m_driverController.a().onTrue(new InstantCommand(() -> m_drivetrain.limelightToTagMode()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_LEDs.intaking = !m_LEDs.intaking));
-    
-    /*************INTAKE CONTROL**********/
     
     m_driverController.povDown()
-    .onTrue(new InstantCommand(() -> 
-    m_intake.SetCollector(0, 0.3)))
-    .onFalse(new InstantCommand(() -> 
-    m_intake.SetCollector(0, 0.0)));
-    
+    .onTrue(
+      new InstantCommand(() -> 
+        m_intake.SetCollector(0, 0.3)))
+    .onFalse(
+      new InstantCommand(() -> 
+        m_intake.SetCollector(0, 0.0)));
+
     m_driverController.leftTrigger().onTrue(new InstantCommand(() -> {
-      m_intake.CollectorOut(true, m_LEDs);
+      m_intake.CollectorOut(true);
       m_intake.PivotIn(false);
-      m_intake.SetCollector(0, 0.35);
-      })).onFalse(new InstantCommand(() -> {
-        m_intake.PivotIn(true);
-      }).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(() -> 
+      })).onFalse(
+      new SequentialCommandGroup(
+        new InstantCommand(() -> {
+            m_intake.PivotIn(true);
+            m_intake.SetCollector(0, 0.35);
+          }),
+        new WaitCommand(0.75)).andThen(new InstantCommand(() -> 
         m_intake.SetCollector(0, 0.0))));
       
-    m_driverController.leftBumper().onTrue(new InstantCommand(() -> 
-    m_intake.SetCollector(-1, 0.25)).andThen(new WaitCommand(0.3)).andThen(
-      new InstantCommand(() -> m_intake.SetCollector(0, 0.35)).andThen(
-      new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))
-      ));
-      
-    m_driverController.rightBumper().onTrue(new InstantCommand(() -> 
-    m_intake.SetCollector(1, 0.25)).andThen(new WaitCommand(0.3)).andThen(
-      new InstantCommand(() -> m_intake.SetCollector(0, 0.35)).andThen(
-      new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))
-      ));
+
+    //Right Trigger controls robot speed
+
+    m_driverController.leftBumper().onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> m_intake.SetCollector(-1, .35)),
+      new WaitCommand(0.3),
+      new InstantCommand(() -> m_intake.SetCollector( 0, 0.35)),
+      new WaitCommand(0.4),
+      new InstantCommand(() -> m_intake.SetCollector(0, 0.0))
+    ));
+    
+    m_driverController.rightBumper().onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> m_intake.SetCollector(1, .35)),
+      new WaitCommand(0.3),
+      new InstantCommand(() -> m_intake.SetCollector( 0, 0.35)),
+      new WaitCommand(0.4),
+      new InstantCommand(() -> m_intake.SetCollector(0, 0.0))
+    ));
         
-    m_driverController.a().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)));
-        
-    m_driverController.back().onTrue(
-      new InstantCommand(() -> m_intake.CollectorOut(true, m_LEDs)).andThen(
-        new WaitCommand(0.5)
-      ).andThen(
-      new InstantCommand(() -> m_intake.SetCollector(0, -0.2)).andThen(
-      new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))));
-    // .onTrue(new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(new WaitCommand(0.12)).andThen(new InstantCommand(() -> 
-    // m_intake.SetCollector(0, -0.9))))
-    // .onFalse(new InstantCommand(() -> 
-    // m_intake.SetCollector(0, 0.0)));
-        
-    /******************LED CONTROL***************/
-      
+    m_driverController.a().onTrue(new InstantCommand(() -> m_intake.CollectorOut(false)));
+    
     m_driverController.y()
     .onTrue(new InstantCommand(
       () -> m_LEDs.setCone())
@@ -218,9 +211,38 @@ public class RobotContainer {
     .andThen(new WaitCommand(5).andThen(
       () -> m_LEDs.setSignal(Color.kBlack)
     )));
+        
+    m_driverController.back().onTrue(
+      new InstantCommand(() -> m_intake.CollectorOut(true)).andThen(
+        new WaitCommand(0.5)
+      ).andThen(
+      new InstantCommand(() -> m_intake.SetCollector(0, -0.2)).andThen(
+      new WaitCommand(0.4).andThen(new InstantCommand(() -> m_intake.SetCollector(0, 0.0))))));
 
-    m_driverController.start().whileTrue(new BalanceRobotOnChargingStation(m_drivetrain, () -> 2));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_intake.CollectorOut(true)));
+    
+        
+    /******************LED CONTROL***************/
+      
 
+    // m_driverController.start().whileTrue(new BalanceRobotOnChargingStation(m_drivetrain, () -> 2));
+
+    m_operatorController.leftTrigger().onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> m_intake.CollectorOut(true)),
+      new WaitCommand(0.4),
+      new InstantCommand(() -> m_intake.SetCollector(0, -1.0)),
+      new WaitCommand(0.7),
+      new InstantCommand(() -> {
+        m_intake.SetCollector(0, 0.0);
+        m_intake.CollectorOut(false);
+      })
+    ));
+
+
+
+    /*************INTAKE CONTROL**********/
+    
+    
     /*************OPERATOR CONTROLLER*****************/
             
     m_operatorController.back().onTrue(new InstantCommand(() -> {}, m_arm));
@@ -228,13 +250,13 @@ public class RobotContainer {
     m_operatorController.y().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
       new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1)).andThen(
-      new ArmToAngles(m_arm, 20.0, 155.0, true, 0.15).withTimeout(1)).andThen(
+      // new ArmToAngles(m_arm, 20.0, 155.0, true, 0.15).withTimeout(1)).andThen(
       new ArmToAngles(m_arm, 35.0, 155.0, true, 0.12))); //Score High
-
+   
     m_operatorController.b().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
       new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1).andThen(
-      new ArmToAngles(m_arm, 10.3, 98.0, true, 0.08)))); // Score Mid
+      new ArmToAngles(m_arm, 7.0, 93.5, true, 0.08)))); // Score Mid
     
     m_operatorController.a().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
@@ -242,14 +264,10 @@ public class RobotContainer {
 
     m_operatorController.x()
       .whileTrue(
-        new InstantCommand(() -> m_intake.CollectorOut(false, m_LEDs)).andThen(
+        new InstantCommand(() -> m_intake.CollectorOut(false)).andThen(
         new WaitCommand(0.5)).andThen(
-        new ArmToAngles(m_arm, 2.0, -11.5, false, 0.15))); // 4.2, -12.6
-          // new WaitCommand(0.2)).andThen(
-          //   new InstantCommand(() -> m_intake.PivotIn(false))).andThen(
-          //     new WaitCommand(0.5)).andThen(
-          //       new ArmToAngles(m_arm, 3.0, 0.0, true, 0.15)
-          //       ) );
+        new ArmToAngles(m_arm, 4.0, -16.8, false, 0.15)))
+      .onFalse(new HoldArm(m_arm, m_operatorController));
                 
     m_operatorController.povDown().whileTrue(
       new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
