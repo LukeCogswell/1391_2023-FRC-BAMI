@@ -25,17 +25,17 @@
     {
       "anchorPoint": {
         "x": 6.703598799494318,
-        "y": 4.608489559347165
+        "y": 4.619925017310805
       },
       "prevControl": {
         "x": 3.4330578218931036,
-        "y": 4.642795933238086
+        "y": 4.654231391201726
       },
       "nextControl": {
         "x": 3.4330578218931036,
-        "y": 4.642795933238086
+        "y": 4.654231391201726
       },
-      "holonomicAngle": -9.211026540816741,
+      "holonomicAngle": -6.952957468173978,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -75,19 +75,13 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.6981818181818159,
+      "position": 0.8145454545454458,
       "names": [
         "Collect"
       ]
     },
     {
-      "position": 1.1781818181818253,
-      "names": [
-        "IntakeUp"
-      ]
-    },
-    {
-      "position": 1.4545454545454097,
+      "position": 1.1054545454545486,
       "names": [
         "Transfer"
       ]
@@ -96,6 +90,12 @@
       "position": 0.0,
       "names": [
         "HoldArm"
+      ]
+    },
+    {
+      "position": 1.07,
+      "names": [
+        "IntakeUp"
       ]
     }
   ]

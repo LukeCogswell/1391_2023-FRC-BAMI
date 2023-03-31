@@ -8,6 +8,7 @@ import static frc.robot.Constants.OIConstants.*;
 
 import java.util.Map;
 
+import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
 import frc.robot.commands.ArmToPos;
@@ -78,8 +79,12 @@ public class RobotContainer {
     autoChooser.setDefaultOption("1GP Mobility", Autos.OneGPMobility(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("1GPBalance Charge Station", Autos.OneGPBalance(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2GP Charging Station", Autos.TwoGPBalanceCS(m_drivetrain, m_arm, m_intake, m_LEDs));
-    autoChooser.addOption("2GP Side", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2GP Non CC", Autos.TwoGP(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2GP CC", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("3GP Non CC", Autos.ThreeGPNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    
+    // autoChooser.addOption("PID Tuning", Autos.PIDTuning(m_drivetrain));
+    
     // autoChooser.addOption("2GP", Autos.TwoGP(m_drivetrain, m_arm, m_intake, m_LEDs));
 
 
@@ -150,11 +155,14 @@ public class RobotContainer {
     
     /*************DRIVER CONTROLLER***********/
     
-    m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, 22 / kInchesToMeters).andThen(
-      new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
-    m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, -22 / kInchesToMeters).andThen(
-      new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
-      
+    // m_driverController.povLeft().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, 22 / kInchesToMeters).andThen(
+    //   new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
+    // m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, -22 / kInchesToMeters).andThen(
+    //   new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
+    m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 3));  
+    m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 1));  
+
+
     m_driverController.povUp().whileTrue(new AlignWithTag(m_drivetrain, 2));
     
     m_driverController.povDown()
@@ -236,8 +244,18 @@ public class RobotContainer {
         m_intake.SetCollector(0, 0.0);
         m_intake.CollectorOut(false);
       })
-    ));
-
+      ));
+      
+      m_operatorController.rightTrigger().onTrue(new SequentialCommandGroup(
+        new InstantCommand(() -> m_intake.CollectorOut(true)),
+        new WaitCommand(0.4),
+        new InstantCommand(() -> m_intake.SetCollector(0, -0.3)),
+        new WaitCommand(0.7),
+        new InstantCommand(() -> {
+          m_intake.SetCollector(0, 0.0);
+          m_intake.CollectorOut(false);
+        })
+      ));
 
 
     /*************INTAKE CONTROL**********/
@@ -251,12 +269,12 @@ public class RobotContainer {
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
       new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1)).andThen(
       // new ArmToAngles(m_arm, 20.0, 155.0, true, 0.15).withTimeout(1)).andThen(
-      new ArmToAngles(m_arm, 35.0, 155.0, true, 0.12))); //Score High
+      new ArmToAngles(m_arm, 35.0, 156.0, true, 0.12))); //Score High
    
     m_operatorController.b().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
-      new ArmToAngles(m_arm, -8.0, 90.0, true, 0.15).withTimeout(1).andThen(
-      new ArmToAngles(m_arm, 7.0, 93.5, true, 0.08)))); // Score Mid
+      new ArmToAngles(m_arm, -8.0, 90.6, true, 0.15).withTimeout(1).andThen(
+      new ArmToAngles(m_arm, 8.3, 90.3, true, 0.08)))); // Score Mid
     
     m_operatorController.a().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
@@ -287,7 +305,7 @@ public class RobotContainer {
     //   new ArmToAngles(m_arm, 10.0, 0.0, true, 0.2)
     //   ));
 
-    m_operatorController.rightTrigger().whileTrue(new ArmToPos(m_arm, 30.0, 30.0, m_operatorController));
+      
     
     m_operatorController.start()
       .onTrue(new InstantCommand(() -> m_intake.PivotIn(false))) // backwards

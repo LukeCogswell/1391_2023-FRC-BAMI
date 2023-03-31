@@ -57,26 +57,35 @@ public class ArmToAngles extends CommandBase {
   @Override
   public void execute() {
     // speedMultiplier = Math.abs(m_arm.getFKArmPos()[0]) >  30 ? 0.7 : 1; 
-    if (Math.abs(m_arm.getShoulderAngle()) > 20 && Math.abs(targetShoulderAngle) > 20) {
-      shoulderSpeedMultiplier = 0.5;
+    if (targetShoulderAngle > 20) {
+
+      if (Math.abs(m_arm.getShoulderAngle()) > 20 && Math.abs(targetShoulderAngle) > 20) {
+        shoulderSpeedMultiplier = 0.5;
+      }
+      if (Math.abs(m_arm.getShoulderAngle()) > 25 && Math.abs(targetShoulderAngle) > 25) {
+        shoulderSpeedMultiplier = 0.3;
+      }
+      if (Math.abs(m_arm.getShoulderAngle()) > 30 && Math.abs(targetShoulderAngle) > 30) {
+        shoulderSpeedMultiplier = 0.1;
+      }
+      if (Math.abs(m_arm.getElbowAngle()) > 145 && Math.abs(targetElbowAngle) > 145) {
+        elbowSpeedMultiplier = 0.9;
+      }
+      if (Math.abs(m_arm.getElbowAngle()) > 150 && Math.abs(targetElbowAngle) > 150) {
+        elbowSpeedMultiplier = 0.8;
+      }
+      if (Math.abs(m_arm.getElbowAngle()) > 155 && Math.abs(targetElbowAngle) > 155) {
+        elbowSpeedMultiplier = 0.6;
+      }
+    } else if (Math.abs(targetElbowAngle) > 30) {
+      // if (Math.abs(m_arm.getShoulderAngle()) > Math.abs(targetShoulderAngle) * 0.95) shoulderSpeedMultiplier = 0.5;
+      // if (Math.abs(m_arm.getShoulderAngle()) > Math.abs(targetShoulderAngle) * 0.9) shoulderSpeedMultiplier = 0.3;
+      // if (Math.abs(m_arm.getShoulderAngle()) > Math.abs(targetShoulderAngle) * 0.85) shoulderSpeedMultiplier = 0.1;
+      if (Math.abs(m_arm.getElbowAngle()) > Math.abs(targetElbowAngle) * 0.95) elbowSpeedMultiplier = 0.9;
+      if (Math.abs(m_arm.getElbowAngle()) > Math.abs(targetElbowAngle) * 0.9) elbowSpeedMultiplier = 0.8;
     }
-    if (Math.abs(m_arm.getShoulderAngle()) > 25 && Math.abs(targetShoulderAngle) > 25) {
-      shoulderSpeedMultiplier = 0.3;
-    }
-    if (Math.abs(m_arm.getShoulderAngle()) > 30 && Math.abs(targetShoulderAngle) > 30) {
-      shoulderSpeedMultiplier = 0.1;
-    }
-    if (Math.abs(m_arm.getElbowAngle()) > 145 && Math.abs(targetElbowAngle) > 145) {
-      elbowSpeedMultiplier = 0.9;
-    }
-    if (Math.abs(m_arm.getElbowAngle()) > 150 && Math.abs(targetElbowAngle) > 150) {
-      elbowSpeedMultiplier = 0.8;
-    }
-    if (Math.abs(m_arm.getElbowAngle()) > 155 && Math.abs(targetElbowAngle) > 155) {
-      elbowSpeedMultiplier = 0.6;
-    }
-    
-    var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
+      
+      var elbowSpeed = -elbowController.calculate(m_arm.getElbowAngle());
     var shoulderSpeed = shoulderController.calculate(m_arm.getShoulderAngle());
     elbowSpeed = MathUtil.clamp(elbowSpeed, -kElbowMaxSpeed, kElbowMaxSpeed);
     shoulderSpeed = MathUtil.clamp(shoulderSpeed, -kShoulderMaxSpeed, kShoulderMaxSpeed);

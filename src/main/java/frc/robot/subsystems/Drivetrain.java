@@ -256,11 +256,7 @@ public class Drivetrain extends SubsystemBase {
   public void updateOdometryIfTag() {
       if (getTV() == 1 && getTID() < 4 || getTID() > 5 &&  getTID() < 9 && isDetectingAprilTags()) {
         var newPos = new Pose2d(getRobotPoseFromAprilTag().getTranslation(), getFieldPosition().getRotation());
-        if (oldPos != newPos) {
-          setOdometry(newPos);
-        }
-          
-        oldPos = newPos;
+        setOdometry(newPos);
       }
     
   }

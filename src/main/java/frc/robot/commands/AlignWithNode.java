@@ -51,16 +51,15 @@ public class AlignWithNode extends CommandBase {
     m_drivetrain.updateOdometryIfTag();
     var tagID = m_drivetrain.getTID();
     var tagPose = Constants.AprilTagFieldLayouts.AprilTagList.get(tagID - 1).pose;
-    
-
-    if (node == 2) m_drivetrain.limelightToTagMode();
-    else m_drivetrain.limelightToTapeMode();
+  
+    // if (node == 2) m_drivetrain.limelightToTagMode();
+    // else m_drivetrain.limelightToTapeMode();
 
     var offsetY = 0.0;
     xController.setSetpoint(1.8);
     turnController.setSetpoint(0);
     if (node == 3 ) offsetY = -kNodeOffset; 
-    else if (node == 1) offsetY = kNodeOffset;
+    if (node == 1) offsetY = kNodeOffset;
     targetYPos = tagPose.getY() + offsetY;
   
     yController.setSetpoint(targetYPos);
@@ -84,9 +83,9 @@ public class AlignWithNode extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_drivetrain.drive(0.0, 0.0, 0.0, true);
-    if (interrupted) {
-      m_drivetrain.limelightToTagMode();
-    }
+    // if (interrupted) {
+    //   m_drivetrain.limelightToTagMode();
+    // }
     turnController.close();
     yController.close();
     xController.close();
