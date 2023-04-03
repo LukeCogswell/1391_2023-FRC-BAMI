@@ -37,9 +37,9 @@ public class DriveWithJoysticks extends CommandBase {
   double m_thetaSpeed;
   double m_precisionFactor;
 
-  private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(1 / kAccelerationSeconds);
-  private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(1 / kAccelerationSeconds);
-  private final SlewRateLimiter m_thetaLimiter = new SlewRateLimiter(1 / kAccelerationSeconds);
+  private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(/*1 / kAccelerationSeconds*/50);
+  private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(/*1 / kAccelerationSeconds*/50);
+  private final SlewRateLimiter m_thetaLimiter = new SlewRateLimiter(/*1 / kAccelerationSeconds*/50);
   /** Creates a new Drive. */
   public DriveWithJoysticks(
       Drivetrain drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, DoubleSupplier precision, Trigger faceForwards, Trigger isfieldRelative) {

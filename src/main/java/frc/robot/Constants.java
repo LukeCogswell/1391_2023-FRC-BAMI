@@ -84,7 +84,7 @@ public final class Constants {
   }
   
   public static final class BalancingConstants {
-    public static final double kAngleTolerance = 7.0; //degrees
+    public static final double kAngleTolerance = 10.0; //degrees
     public static final double kTriggerMultiplier = 0.2; 
     public static final double kSpeedLimit = 0.4; 
   }

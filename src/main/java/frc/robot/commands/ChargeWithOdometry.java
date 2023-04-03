@@ -33,7 +33,7 @@ public class ChargeWithOdometry extends CommandBase {
   @Override
   public void execute() {
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
-    xDrive = MathUtil.clamp(xDrive, -1, 1);
+    xDrive = MathUtil.clamp(xDrive, -2, 2);
     m_drivetrain.drive(xDrive, 0, 0, true);
   }
 

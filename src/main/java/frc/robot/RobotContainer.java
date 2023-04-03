@@ -11,12 +11,12 @@ import java.util.Map;
 import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
-import frc.robot.commands.ArmToPos;
+// import frc.robot.commands.ArmToPos;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DriveForDistanceInDirection;
+// import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
-import frc.robot.commands.HoldArmAtPos;
+// import frc.robot.commands.HoldArmAtPos;
 import edu.wpi.first.cscore.VideoCamera;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
@@ -38,7 +38,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import static frc.robot.Constants.MeasurementConstants.*;
+// import static frc.robot.Constants.MeasurementConstants.*;
 // import frc.robot.subsystems.Stinger;
 
 /**
@@ -80,7 +80,9 @@ public class RobotContainer {
     autoChooser.addOption("1GPBalance Charge Station", Autos.OneGPBalance(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2GP Charging Station", Autos.TwoGPBalanceCS(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2GP Non CC", Autos.TwoGP(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2.5GP Non CC", Autos.TwoPlusOneGP(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2GP CC", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("2.5GP CC", Autos.TwoPlusOneGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("3GP Non CC", Autos.ThreeGPNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     
     // autoChooser.addOption("PID Tuning", Autos.PIDTuning(m_drivetrain));
@@ -278,7 +280,7 @@ public class RobotContainer {
     
     m_operatorController.a().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
-      new ArmToAngles(m_arm, 28.5, 37.4, true, 0.08))); // Score Low
+      new ArmToAngles(m_arm, 27.0, 37.4, true, 0.08))); // Score Low
 
     m_operatorController.x()
       .whileTrue(
@@ -291,7 +293,7 @@ public class RobotContainer {
       new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
       new ArmToAngles(m_arm, 3.0, 0.0, true, 0.2))); // go to zero(straight up and down)
     
-      m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
+    m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
     
     m_operatorController.povRight().onTrue(new InstantCommand(() -> m_arm.GrabGp(false)));
     m_operatorController.povLeft().onTrue(new InstantCommand(() -> m_arm.GrabGp(true)));

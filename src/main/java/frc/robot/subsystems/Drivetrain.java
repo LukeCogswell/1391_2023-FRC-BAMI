@@ -250,6 +250,7 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
+    SmartDashboard.putNumber("Pitch", getNavxPitch());
     SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
   }
 

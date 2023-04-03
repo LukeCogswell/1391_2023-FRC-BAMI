@@ -51,13 +51,13 @@ public class HoldArm extends CommandBase {
   public void execute() {
     if (Math.abs(controller.getLeftY()) > 0.2) {
       var prevAngle = targetElbowAngle;
-      targetElbowAngle -= Math.copySign(0.3, controller.getLeftY());
+      targetElbowAngle -= Math.copySign(0.6, controller.getLeftY());
       targetElbowAngle = targetElbowAngle > 165 || targetElbowAngle < -165 ? prevAngle: targetElbowAngle;
       elbowController.setSetpoint(targetElbowAngle);
     }
     if (Math.abs(controller.getRightY()) > 0.2) {
       var prevAngle = targetShoulderAngle;
-      targetShoulderAngle += Math.copySign(0.3, controller.getRightY());
+      targetShoulderAngle += Math.copySign(0.6, controller.getRightY());
       targetShoulderAngle = targetShoulderAngle > 37 || targetShoulderAngle < -37 ? prevAngle: targetShoulderAngle;
       shoulderController.setSetpoint(targetShoulderAngle);
     }
