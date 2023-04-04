@@ -84,6 +84,7 @@ public class RobotContainer {
     autoChooser.addOption("2GP CC", Autos.TwoGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("2.5GP CC", Autos.TwoPlusOneGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("3GP Non CC", Autos.ThreeGPNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("3GP CC", Autos.ThreeGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     
     // autoChooser.addOption("PID Tuning", Autos.PIDTuning(m_drivetrain));
     
