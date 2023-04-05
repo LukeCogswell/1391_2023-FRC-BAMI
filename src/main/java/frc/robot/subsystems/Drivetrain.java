@@ -246,12 +246,12 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    SmartDashboard.putNumber("TA", getTA()); 
+    // SmartDashboard.putNumber("TA", getTA()); 
     // SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
     // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
-    SmartDashboard.putNumber("Pitch", getNavxPitch());
-    SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
+    // SmartDashboard.putNumber("Pitch", getNavxPitch());
+    // SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
   }
 
   public void updateOdometryIfTag() {

@@ -85,6 +85,7 @@ public class RobotContainer {
     autoChooser.addOption("2.5GP CC", Autos.TwoPlusOneGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("3GP Non CC", Autos.ThreeGPNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     autoChooser.addOption("3GP CC", Autos.ThreeGPCC(m_drivetrain, m_arm, m_intake, m_LEDs));
+    autoChooser.addOption("Link High Non CC", Autos.LinkHighNonCC(m_drivetrain, m_arm, m_intake, m_LEDs));
     
     // autoChooser.addOption("PID Tuning", Autos.PIDTuning(m_drivetrain));
     
@@ -93,26 +94,26 @@ public class RobotContainer {
 
     phCompressor.enableDigital();
 
-    ShuffleboardLayout ArmControl = Shuffleboard.getTab("Commands")
-    .getLayout("Arm IK", BuiltInLayouts.kList)
-    .withSize(2,3)
-    .withPosition(4,4)
-    .withProperties(Map.of("Label Position", "LEFT"));
-    GenericEntry armXEntry = 
-      ArmControl.add("X Pos", 5.0).getEntry();  
-    GenericEntry armYEntry = 
-      ArmControl.add("Y Pos", 8.0).getEntry();  
-    SuppliedValueWidget elbowAngle =
-      ArmControl.addNumber("Elbow", 
-      () -> m_arm.getIKElbow(
-        armXEntry.getDouble(5.0),
-        armYEntry.getDouble(8.0)));
+    // ShuffleboardLayout ArmControl = Shuffleboard.getTab("Commands")
+    // .getLayout("Arm IK", BuiltInLayouts.kList)
+    // .withSize(2,3)
+    // .withPosition(4,4)
+    // .withProperties(Map.of("Label Position", "LEFT"));
+    // GenericEntry armXEntry = 
+    //   ArmControl.add("X Pos", 5.0).getEntry();  
+    // GenericEntry armYEntry = 
+    //   ArmControl.add("Y Pos", 8.0).getEntry();  
+    // SuppliedValueWidget elbowAngle =
+    //   ArmControl.addNumber("Elbow", 
+    //   () -> m_arm.getIKElbow(
+    //     armXEntry.getDouble(5.0),
+    //     armYEntry.getDouble(8.0)));
         
-    SuppliedValueWidget shoulderAngle =
-      ArmControl.addNumber("Shoulder", 
-      () -> m_arm.getIKShoulder(
-        armXEntry.getDouble(5.0),
-        armYEntry.getDouble(8.0)));
+    // SuppliedValueWidget shoulderAngle =
+    //   ArmControl.addNumber("Shoulder", 
+    //   () -> m_arm.getIKShoulder(
+    //     armXEntry.getDouble(5.0),
+    //     armYEntry.getDouble(8.0)));
     
     SuppliedValueWidget elbowAng =
       Shuffleboard.getTab("Commands").addNumber("Elbow Angle", () -> m_arm.getElbowAngle());
@@ -120,11 +121,11 @@ public class RobotContainer {
     SuppliedValueWidget shoulderAng =
       Shuffleboard.getTab("Commands").addNumber("Shoulder Angle", () -> m_arm.getShoulderAngle());
 
-    SuppliedValueWidget armXPos =
-      Shuffleboard.getTab("Commands").addString("Grabber X Position", () -> m_arm.getFKArmPos()[0].toString());
+    // SuppliedValueWidget armXPos =
+    //   Shuffleboard.getTab("Commands").addString("Grabber X Position", () -> m_arm.getFKArmPos()[0].toString());
     
-    SuppliedValueWidget armYPos =
-      Shuffleboard.getTab("Commands").addString("Grabber Y Position", () -> m_arm.getFKArmPos()[1].toString());
+    // SuppliedValueWidget armYPos =
+    //   Shuffleboard.getTab("Commands").addString("Grabber Y Position", () -> m_arm.getFKArmPos()[1].toString());
 
       m_drivetrain.setDefaultCommand(
       new DriveWithJoysticks(
@@ -294,8 +295,20 @@ public class RobotContainer {
       new ArmToAngles(m_arm, 3.0, m_arm.getElbowAngle(), true, 0.2).withTimeout(1).andThen(
       new ArmToAngles(m_arm, 3.0, 0.0, true, 0.2))); // go to zero(straight up and down)
     
-    m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
-    
+    // m_operatorController.povUp().whileTrue(new ArmToAngles(m_arm, -10.0, -92.5, false, 0.15));
+    m_operatorController.povUp().whileTrue(
+      new SequentialCommandGroup(
+      new ArmToAngles(m_arm, -27.77, -28.5, false, null).withTimeout(1.3),
+      new WaitCommand(0.1),
+      new InstantCommand(() -> m_arm.GrabGp(true)),
+      new WaitCommand(0.2),
+      new InstantCommand(() -> m_intake.PivotIn(false)),
+      new WaitCommand(0.2),
+      new InstantCommand(() -> m_intake.CollectorOut(false)),
+      new ArmToAngles(m_arm, 4.0, -45.0, true, null).withTimeout(0.6),
+      new ArmToAngles(m_arm, 4.0, 0.0, true, null).withTimeout(0.6)
+    ));
+
     m_operatorController.povRight().onTrue(new InstantCommand(() -> m_arm.GrabGp(false)));
     m_operatorController.povLeft().onTrue(new InstantCommand(() -> m_arm.GrabGp(true)));
     

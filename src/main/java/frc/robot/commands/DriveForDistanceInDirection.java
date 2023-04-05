@@ -45,9 +45,9 @@ public class DriveForDistanceInDirection extends CommandBase {
     var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
     var yDrive = yController.calculate(m_drivetrain.getFieldPosition().getY());
     var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getDegrees());
-    rot = MathUtil.clamp(rot, -1, 1);
-    xDrive = MathUtil.clamp(xDrive, -1.4, 1.4);
-    yDrive = MathUtil.clamp(yDrive, -1.4, 1.4);
+    rot = MathUtil.clamp(rot, -4.5, 4.5);
+    xDrive = MathUtil.clamp(xDrive, -4.5, 4.5);
+    yDrive = MathUtil.clamp(yDrive, -4.5, 4.5);
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }
 
