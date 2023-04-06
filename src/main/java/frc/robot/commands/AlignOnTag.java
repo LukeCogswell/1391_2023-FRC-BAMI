@@ -57,6 +57,7 @@ public class AlignOnTag extends CommandBase {
     xController.setSetpoint(3.4);
     turnController.setSetpoint(0.0);
     yController.setSetpoint(1.5);
+    if (node == 3) yController.setSetpoint(-48.75);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -71,6 +72,7 @@ public class AlignOnTag extends CommandBase {
     yDrive = MathUtil.clamp(yDrive, -3.0, 3.0);
     if (m_drivetrain.getTA() < 0.5) xDrive = -2.5;
     if (m_drivetrain.getTA() == 0) xDrive = 0.0;
+    if (node == 3) xDrive = 0.0;
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }
 

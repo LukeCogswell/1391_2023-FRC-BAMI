@@ -552,19 +552,27 @@ public final class Autos {
       intake.SetCollector(0, 0.0);
     }));
 
-    Constants.AUTO_EVENT_MAP.put("ExtendArm", new ArmToAngles(arm, 4.0, 90.0, true, null));
+    // Constants.AUTO_EVENT_MAP.put("ExtendArm", new ArmToAngles(arm, 4.0, 90.0, true, null));
 
     Constants.AUTO_EVENT_MAP.put("ZeroArm", new ArmToAngles(arm, 4.0, 0.0, false, null).withTimeout(3));
 
     Constants.AUTO_EVENT_MAP.put("Transfer", new SequentialCommandGroup(
-      new ArmToAngles(arm, 4.0, -16.8, false, 0.3).withTimeout(0.8),
-      new WaitCommand(0.1),
+      new ArmToAngles(arm, 4.0, -16.8, false, 0.3).withTimeout(0.92),
+      // new WaitCommand(0.1),
       new InstantCommand(() -> arm.GrabGp(true)),
       new WaitCommand(0.1),
       new InstantCommand(() -> intake.PivotIn(false)),
       new WaitCommand(0.1),
-      new ArmToAngles(arm, 4.0, 90.0, true, 0.2).withTimeout(2)));
-
+      new ArmToAngles(arm, -4.0, 100.0, true, 0.2)));
+      
+      Constants.AUTO_EVENT_MAP.put("TransferCone", new SequentialCommandGroup(
+        new ArmToAngles(arm, 4.0, -16.8, false, 0.3).withTimeout(0.83),
+        // new WaitCommand(0.1),
+        new InstantCommand(() -> arm.GrabGp(true)),
+        new WaitCommand(0.1),
+        new InstantCommand(() -> intake.PivotIn(false)),
+        new WaitCommand(0.1),
+        new ArmToAngles(arm, -8.0, 110.0, true, 0.2)));
     
     // Constants.AUTO_EVENT_MAP.put("HoldArm", new ArmToAngles(arm, 3.0, 0.0, false, 0.3));
 
@@ -583,11 +591,12 @@ public final class Autos {
       }),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPaths.get(0)), AutoPaths.get(0).getMarkers(), Constants.AUTO_EVENT_MAP),
       new SequentialCommandGroup(new InstantCommand(() -> arm.GrabGp(true)).andThen(new WaitCommand(0.1).andThen(new InstantCommand(() -> intake.PivotIn(false)))),
-      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.9), //Score High
+      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.6), //Score High
       new InstantCommand(() -> arm.GrabGp(false))),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPaths.get(1)), AutoPaths.get(1).getMarkers(), Constants.AUTO_EVENT_MAP),
-      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.9),
+      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(1.0),
       new InstantCommand(() -> arm.GrabGp(false)),
+      new WaitCommand(0.1),
       new ArmToAngles(arm, 4.0, 0.0, false, null));
       // new DriveForDistanceInDirection(drivetrain, 4.0, 0.0));
 
