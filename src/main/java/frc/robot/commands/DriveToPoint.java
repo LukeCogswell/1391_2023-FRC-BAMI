@@ -50,12 +50,12 @@ public class DriveToPoint extends CommandBase {
     if (Timer.getFPGATimestamp() % 1 < 0.03 && useTagOd) {
       m_drivetrain.updateOdometryIfTag();
     }
-    var xDrive = xController.calculate(m_drivetrain.getFieldPosition().getX());
+    var xDrive =  xController.calculate(m_drivetrain.getFieldPosition().getX());
     var yDrive = yController.calculate(m_drivetrain.getFieldPosition().getY());
     var rot = turnController.calculate(m_drivetrain.getFieldPosition().getRotation().getRadians());
-    rot = MathUtil.clamp(rot, -1, 1);
-    xDrive = MathUtil.clamp(xDrive, -1.7, 1.7);
-    yDrive = MathUtil.clamp(yDrive, -1.7, 1.7);
+    rot = MathUtil.clamp(rot, -4, 4);
+    xDrive = MathUtil.clamp(xDrive, -1.0, 1.0);
+    yDrive = MathUtil.clamp(yDrive, -1.0, 1.0);
     m_drivetrain.drive(xDrive, yDrive, rot, true);
   }
 

@@ -184,8 +184,10 @@ public class RobotContainer {
       new SequentialCommandGroup(
         new InstantCommand(() -> {
             m_intake.PivotIn(true);
-            m_intake.SetCollector(0, 0.35);
+            // m_intake.SetCollector(0, 0.35);
           }),
+        new WaitCommand(0.4),
+        new InstantCommand(() -> m_intake.SetCollector(0, 0.35)),
         new WaitCommand(0.75)).andThen(new InstantCommand(() -> 
         m_intake.SetCollector(0, 0.0))));
       

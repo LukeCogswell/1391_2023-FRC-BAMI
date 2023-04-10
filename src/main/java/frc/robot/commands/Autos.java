@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.sound.midi.Sequencer;
 
+import org.w3c.dom.Node;
+
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
@@ -445,7 +447,7 @@ public final class Autos {
           new ParallelCommandGroup(
             new ArmToAngles(arm, 4.0, 0.0, false, null),
             new SequentialCommandGroup(
-              new ChargeWithOdometry(drivetrain, 4.45), //4.45
+              new ChargeWithOdometry(drivetrain, 4.6), //4.45
               new BalanceRobotOnChargingStation(drivetrain, () -> 0.4))
               )
               
@@ -517,7 +519,7 @@ public final class Autos {
       // new AlignWithTag(drivetrain, 2).withTimeout(1.4),
       // new ArmToAngles(arm, -8.0, 90.0, true, 0.15).withTimeout(0.3),
       // new ArmToAngles(arm, 20.0, 154.0, true, 0.15).withTimeout(0.8),
-      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.9), //Score High
+      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.8), //Score High
       new InstantCommand(() -> arm.GrabGp(false))),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPaths.get(1)), AutoPaths.get(1).getMarkers(), Constants.AUTO_EVENT_MAP),
       new WaitCommand(0.2),
@@ -533,6 +535,7 @@ public final class Autos {
 
   public static CommandBase LinkHighNonCC(Drivetrain drivetrain, Arm arm, Intake intake, LEDs LEDs) {
     
+
     Constants.AUTO_EVENT_MAP.put("Collect", 
     new SequentialCommandGroup(
       new InstantCommand(() -> {
@@ -541,10 +544,11 @@ public final class Autos {
       }),
       new WaitCommand(0.9),
       new InstantCommand(() -> {
-        intake.SetCollector(0, 0.3);
         intake.PivotIn(true);
       }),
-      new WaitCommand(0.7),
+      new WaitCommand(0.3),
+      new InstantCommand(() ->intake.SetCollector(0, 0.3)),
+      new WaitCommand(0.4),
       new InstantCommand(() -> intake.SetCollector(0, 0.0))));
     
     Constants.AUTO_EVENT_MAP.put("IntakeUp", new InstantCommand(() -> {
@@ -583,24 +587,31 @@ public final class Autos {
       new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 1.76, 4.96, new Rotation2d(0.0)))),
       new ArmToAngles(arm, -8.0, 100.0, true, 0.15).withTimeout(0.8),
       // new ArmToAngles(arm, 20.0, 155.0, true, 0.15).withTimeout(0.8),
-      new ArmToAngles(arm, 35.4, 150.0, true, 0.1).withTimeout(1.2), //Score High
+      new ArmToAngles(arm, 35.4, 150.0, true, 0.1).withTimeout(1.0), //Score High
       new InstantCommand(() -> arm.GrabGp(false)),
       new WaitCommand(0.1),
       new InstantCommand(() -> {
-        if (DriverStation.getAlliance() == Alliance.Red) drivetrain.setOdometry(new Pose2d( 1.76, kFieldY - 4.96, new Rotation2d(0)));
+        if (DriverStation.getAlliance() == Alliance.Red) {
+          drivetrain.setOdometry(new Pose2d( 1.76, kFieldY - 4.96, new Rotation2d(0)));
+        }
       }),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPaths.get(0)), AutoPaths.get(0).getMarkers(), Constants.AUTO_EVENT_MAP),
       new SequentialCommandGroup(new InstantCommand(() -> arm.GrabGp(true)).andThen(new WaitCommand(0.1).andThen(new InstantCommand(() -> intake.PivotIn(false)))),
-      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.6), //Score High
+      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.5), //Score High
       new InstantCommand(() -> arm.GrabGp(false))),
       new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPaths.get(1)), AutoPaths.get(1).getMarkers(), Constants.AUTO_EVENT_MAP),
-      new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(1.0),
+      new ParallelCommandGroup(
+        // new AlignWithTag(drivetrain, 2).withTimeout(0.7).andThen(
+          new DriveForDistanceInDirection(drivetrain, 0.0, DriverStation.getAlliance() == Alliance.Red ? 28 / Constants.MeasurementConstants.kInchesToMeters: -28 / Constants.MeasurementConstants.kInchesToMeters).withTimeout(1.0),
+
+        // new DriveToPoint(drivetrain, 1.82, DriverStation.getAlliance() == Alliance.Blue ? 3.82 : kFieldY - 3.82, 0.0, false), //FIXME
+        new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(1.3)),
       new InstantCommand(() -> arm.GrabGp(false)),
       new WaitCommand(0.1),
       new ArmToAngles(arm, 4.0, 0.0, false, null));
       // new DriveForDistanceInDirection(drivetrain, 4.0, 0.0));
 
-      
+      //1.82, 3.82
   }   
 
   public static CommandBase ThreeGPCC(Drivetrain drivetrain, Arm arm, Intake intake, LEDs LEDs) {
@@ -640,7 +651,7 @@ public final class Autos {
     Constants.AUTO_EVENT_MAP.put("ScoreLow", new SequentialCommandGroup(
       new InstantCommand(() -> intake.CollectorOut(true)),
       new WaitCommand(0.4),
-      new InstantCommand(() -> intake.SetCollector(0, -0.92)),
+      new InstantCommand(() -> intake.SetCollector(0, -0.94)),
       new WaitCommand(0.4),
       new InstantCommand(() -> {
         intake.SetCollector(0, 0.0);
@@ -667,7 +678,7 @@ public final class Autos {
       // new ParallelCommandGroup(new AlignOnTag(drivetrain, 2).withTimeout(1),
         new SequentialCommandGroup(new InstantCommand(() -> arm.GrabGp(true)).andThen(new WaitCommand(0.1).andThen(new InstantCommand(() -> intake.PivotIn(false)))),
         new WaitCommand(0.1),
-        new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.8), //Score High
+        new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(0.5), //Score High
         new InstantCommand(() -> arm.GrabGp(false))
         // )
         ),
@@ -681,53 +692,4 @@ public final class Autos {
 
       
   }   
-//  public static CommandBase ThreeGPNonCC(Drivetrain drivetrain, Arm arm, Intake intake, LEDs LEDs) {
-//   Constants.AUTO_EVENT_MAP.put("Collect", new InstantCommand(() -> {
-//     intake.CollectorOut(true);
-//     intake.PivotIn(false);
-//   }).andThen(new WaitCommand(0.4)).andThen(new InstantCommand(() -> {
-//     intake.SetCollector(0, 0.3);
-//     intake.PivotIn(true);
-//   })).andThen(new WaitCommand(0.7)).andThen(new InstantCommand(() -> {
-//     intake.SetCollector(0, 0.0);
-//   })));
-//   Constants.AUTO_EVENT_MAP.put("ScoreLow", new SequentialCommandGroup(
-//     new InstantCommand(() -> intake.CollectorOut(true)),
-//     new WaitCommand(0.4),
-//     new InstantCommand(() -> intake.SetCollector(0, -0.7)),
-//     new WaitCommand(0.6),
-//     new InstantCommand(() -> {
-//       intake.SetCollector(0, 0.0);
-//       intake.CollectorOut(false);
-//     })
-//   ));
-
-//   Constants.AUTO_EVENT_MAP.put("UpdateOdometry", new InstantCommand(() -> drivetrain.updateOdometryIfTag()));
-
-//   PathPlannerTrajectory AutoPath = 
-//       PathPlanner.loadPath("3GPNonCC", kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
-  
-//   return Commands.sequence(
-//     new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 1.81, 4.94, new Rotation2d(0.0)))),
-//     new ParallelCommandGroup(
-//       new ArmToAngles(arm, 9.0, 18.5, true, null).withTimeout(0.5).andThen(
-//         new ArmToAngles(arm, 7.0, 11.0, true, null)
-//       ),
-//       new WaitCommand(0.4).andThen(
-//       new InstantCommand(() -> {if (DriverStation.getAlliance() == Alliance.Red) drivetrain.setOdometry(new Pose2d(1.81, kFieldY - 4.94, new Rotation2d(0.0)));})  
-//       ).andThen(
-//         new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPath), AutoPath.getMarkers(), Constants.AUTO_EVENT_MAP))
-//     )
-//   );
-//  }
-//  public static CommandBase PIDTuning(Drivetrain drivetrain) {
-
-//   PathPlannerTrajectory AutoPath = 
-//       PathPlanner.loadPath("PIDTuning", kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
-  
-//   return Commands.sequence(
-//     new InstantCommand(() -> drivetrain.setOdometry(new Pose2d( 7.3, 4.56, new Rotation2d(0.0)))),
-//     new FollowPathWithEvents(drivetrain.getCommandForTrajectory(AutoPath), AutoPath.getMarkers(), Constants.AUTO_EVENT_MAP)
-//   );
-//  }
 }
