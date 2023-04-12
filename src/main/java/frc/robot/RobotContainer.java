@@ -8,11 +8,13 @@ import static frc.robot.Constants.OIConstants.*;
 
 import java.util.Map;
 
+import frc.robot.commands.AlignOnTag;
 import frc.robot.commands.AlignWithNode;
 import frc.robot.commands.AlignWithTag;
 import frc.robot.commands.ArmToAngles;
 // import frc.robot.commands.ArmToPos;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveForDistanceInDirection;
 // import frc.robot.commands.DriveForDistanceInDirection;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.HoldArm;
@@ -134,8 +136,10 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(), 
         () -> m_driverController.getRightX(), 
         () -> m_driverController.getRightTriggerAxis(), 
-        new Trigger(() -> false),
-        m_driverController.b()
+        m_driverController.povUp(),
+        m_driverController.b(),
+        m_driverController.leftBumper(),
+        m_driverController.rightBumper()
         )
     );
 
@@ -163,11 +167,14 @@ public class RobotContainer {
     //   new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
     // m_driverController.povRight().whileTrue(new DriveForDistanceInDirection(m_drivetrain, 0.1, -22 / kInchesToMeters).andThen(
     //   new DriveForDistanceInDirection(m_drivetrain, -0.1, 0.0)));
-    m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 3));  
-    m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 1));  
-
-
-    m_driverController.povUp().whileTrue(new AlignWithTag(m_drivetrain, 2));
+    // m_driverController.povLeft().whileTrue(new AlignWithNode(m_drivetrain, 3));  
+    // m_driverController.povRight().whileTrue(new AlignWithNode(m_drivetrain, 1));  
+    m_operatorController.leftBumper().whileTrue(new AlignOnTag(m_drivetrain, 2).withTimeout(1.2).andThen(
+      new DriveForDistanceInDirection(m_drivetrain, 0.0, 24 / Constants.MeasurementConstants.kInchesToMeters)));
+    m_operatorController.rightBumper().whileTrue(new AlignOnTag(m_drivetrain, 2).withTimeout(1.2).andThen(
+      new DriveForDistanceInDirection(m_drivetrain, 0.0, -24 / Constants.MeasurementConstants.kInchesToMeters)));
+    
+    // m_driverController.povUp().whileTrue(new AlignWithTag(m_drivetrain, 2));
     
     m_driverController.povDown()
     .onTrue(
@@ -194,7 +201,7 @@ public class RobotContainer {
 
     //Right Trigger controls robot speed
 
-    m_driverController.leftBumper().onTrue(new SequentialCommandGroup(
+    m_driverController.povLeft().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> m_intake.SetCollector(-1, .35)),
       new WaitCommand(0.3),
       new InstantCommand(() -> m_intake.SetCollector( 0, 0.35)),
@@ -202,7 +209,7 @@ public class RobotContainer {
       new InstantCommand(() -> m_intake.SetCollector(0, 0.0))
     ));
     
-    m_driverController.rightBumper().onTrue(new SequentialCommandGroup(
+    m_driverController.povRight().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> m_intake.SetCollector(1, .35)),
       new WaitCommand(0.3),
       new InstantCommand(() -> m_intake.SetCollector( 0, 0.35)),

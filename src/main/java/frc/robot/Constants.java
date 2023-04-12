@@ -43,6 +43,7 @@ public final class Constants {
     public static final double kInchesToMeters = 39.37;
     public static final double kModuleXOffsetMeters = 21.5 / kInchesToMeters / 2; // 21.5 inches - distance between left and right wheels
     public static final double kModuleYOffsetMeters = 18.5 / kInchesToMeters / 2; // 18.5 inches - distance between front and back wheels
+    public static final double kDiagModuleOffsetMeters = Math.sqrt(Math.pow(kModuleXOffsetMeters, 2) + Math.pow(kModuleYOffsetMeters, 2));
     public static final double kWheelDiameterMeters = 0.10033; // 4 inches - diameter of the wheels
 
     public static final double kCameraOffsetX = 15 / kInchesToMeters;
@@ -61,7 +62,7 @@ public final class Constants {
     public static final double kBackRightEncoderOffset = 22.06;// 27.8       9 
 
     public static final double kShoulderEncoderOffset = 348.9; // FIND THIS
-    public static final double kElbowEncoderOffset = 14.05; // FIND THIS
+    public static final double kElbowEncoderOffset = -45.95; // FIND THIS
     
     public static final double kShoulderLength = 42;
     public static final double kElbowLength = 34;

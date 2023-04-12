@@ -17,7 +17,7 @@ public class DriveForDistanceInDirection extends CommandBase {
   Double xDistance, yDistance;
   private PIDController yController = new PIDController(kDriveP, kDriveI, kDriveD);
   private PIDController xController = new PIDController(kDriveP, kDriveI, kDriveD);
-  private PIDController turnController = new PIDController(0.05, 0, 0);
+  private PIDController turnController = new PIDController(0.3, 0, 0);
   
   public DriveForDistanceInDirection(Drivetrain drivetrain, Double x, Double y) {
     m_drivetrain = drivetrain;

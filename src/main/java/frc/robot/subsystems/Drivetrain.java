@@ -206,6 +206,15 @@ public class Drivetrain extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, Translation2d ctrOfRot) {
+    SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, odometer.getPoseMeters().getRotation())
+            : new ChassisSpeeds(xSpeed, ySpeed, rot), ctrOfRot);
+
+    setModuleStates(swerveModuleStates);
+  }
+
   public void printModuleAbsoluteAngles() {
     System.out.println("Front Left: " + m_frontLeft.getAbsoluteAngle());
     System.out.println("Front Right: " + m_frontRight.getAbsoluteAngle());
@@ -249,9 +258,9 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("TA", getTA()); 
     // SmartDashboard.putNumber("TX", getTX());
     // SmartDashboard.putNumber("NavXYaw", getNavxYaw());
-    // SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
+    SmartDashboard.putString("Gyro Rotation", getGyroRotation2d().toString());
     // SmartDashboard.putNumber("Pitch", getNavxPitch());
-    // SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
+    SmartDashboard.putString("Position", odometer.getPoseMeters().toString());
   }
 
   public void updateOdometryIfTag() {

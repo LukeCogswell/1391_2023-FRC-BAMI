@@ -16,6 +16,8 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class DriveWithJoysticks extends CommandBase {
 
@@ -25,11 +27,14 @@ public class DriveWithJoysticks extends CommandBase {
   DoubleSupplier m_y;
   DoubleSupplier m_theta;
   DoubleSupplier m_precision;
-  Trigger m_faceForwards, fieldRelative;
-  
+  Trigger m_faceForwards, fieldRelative, leftRoll, rightRoll;
+  Rotation2d offsetDirection;
+
   boolean m_PIDcontrol;
-  
-  private PIDController turnController = new PIDController(kTurnP, kTurnI, kTurnD);
+  boolean leftWasPressed = false;
+  boolean rightWasPressed = false;
+
+  private PIDController turnController = new PIDController(0.3, kTurnI, kTurnD);
   
   double m_toAngle;
   double m_xSpeed;
@@ -42,12 +47,15 @@ public class DriveWithJoysticks extends CommandBase {
   private final SlewRateLimiter m_thetaLimiter = new SlewRateLimiter(/*1 / kAccelerationSeconds*/50);
   /** Creates a new Drive. */
   public DriveWithJoysticks(
-      Drivetrain drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, DoubleSupplier precision, Trigger faceForwards, Trigger isfieldRelative) {
+      Drivetrain drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, DoubleSupplier precision, Trigger faceForwards, Trigger isfieldRelative, Trigger rollLeft, Trigger rollRight) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drivetrain = drivetrain;
 
     m_faceForwards = faceForwards;
 
+
+    leftRoll = rollLeft;
+    rightRoll = rollRight;
     m_x = x;
     m_y = y;
     m_theta = theta;
@@ -97,7 +105,42 @@ public class DriveWithJoysticks extends CommandBase {
         * kMaxAngularSpeedRadiansPerSecond * kSpeedMultiplier * kRotationSpeedMultiplier * m_precisionFactor;
     }
 
+    if (leftRoll.getAsBoolean()) {
+      if (!leftWasPressed) {
+        if (m_xSpeed < 0) {
+          offsetDirection = new Rotation2d(-m_drivetrain.getFieldPosition().getRotation().getRadians() + Math.PI - (Math.PI/4));
+          m_thetaSpeed = 3.0;
+          }
+        else {
+          offsetDirection =  new Rotation2d(-m_drivetrain.getFieldPosition().getRotation().getRadians() + (Math.PI/4));
+          m_thetaSpeed = -3.0;
+        } 
+        leftWasPressed = true;
+      }
+      if (m_xSpeed < 0) m_thetaSpeed = 3.0;
+      else m_thetaSpeed = -3.0;
+      m_drivetrain.drive(m_xSpeed, m_ySpeed, m_thetaSpeed, true, new Translation2d(kDiagModuleOffsetMeters, offsetDirection));
+    } else if(rightRoll.getAsBoolean()) {
+      if (!rightWasPressed) {
+        if (m_xSpeed < 0) {
+          offsetDirection =  new Rotation2d(-m_drivetrain.getFieldPosition().getRotation().getRadians() + Math.PI + (Math.PI/4));
+          m_thetaSpeed = -3.0;
+        }
+        else {
+          offsetDirection =  new Rotation2d(-m_drivetrain.getFieldPosition().getRotation().getRadians() - (Math.PI/4));
+          m_thetaSpeed = 3.0;
+        }
+        rightWasPressed = true;
+      }
+      if (m_xSpeed < 0) m_thetaSpeed = -3.0;
+      else m_thetaSpeed = 3.0;
+      m_drivetrain.drive(m_xSpeed, m_ySpeed, m_thetaSpeed, true, new Translation2d(kDiagModuleOffsetMeters, offsetDirection));
+    } else{
+      leftWasPressed = false;
+      rightWasPressed = false;
+      
     m_drivetrain.drive(m_xSpeed, m_ySpeed, m_thetaSpeed, !fieldRelative.getAsBoolean());
+    }
   }
 
   // Called once the command ends or is interrupted.
