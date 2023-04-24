@@ -287,7 +287,7 @@ public class RobotContainer {
     m_operatorController.b().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
       new ArmToAngles(m_arm, -8.0, 90.6, true, 0.15).withTimeout(1).andThen(
-      new ArmToAngles(m_arm, 8.3, 90.3, true, 0.08)))); // Score Mid
+      new ArmToAngles(m_arm, 8.0, 90.3, true, 0.08)))); // Score Mid
     
     m_operatorController.a().whileTrue(
       new InstantCommand(() -> m_intake.PivotIn(false)).andThen(new WaitCommand(0.3)).andThen(
@@ -297,7 +297,7 @@ public class RobotContainer {
       .whileTrue(
         new InstantCommand(() -> m_intake.CollectorOut(false)).andThen(
         new WaitCommand(0.5)).andThen(
-        new ArmToAngles(m_arm, 4.0, -16.8, false, 0.15)))
+        new ArmToAngles(m_arm, 3.50, -19.0, false, 0.15)))
       .onFalse(new HoldArm(m_arm, m_operatorController));
                 
     m_operatorController.povDown().whileTrue(

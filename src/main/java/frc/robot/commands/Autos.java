@@ -439,7 +439,7 @@ public final class Autos {
       new ParallelCommandGroup(
         new AlignWithTag(drivetrain, 2).withTimeout(1.5),
         new SequentialCommandGroup(
-          new ArmToAngles(arm, -8.0, 90.0, true, 0.15).withTimeout(0.5),
+          new ArmToAngles(arm, -8.0, 90.0, true, 0.15).withTimeout(0.1),
           new ArmToAngles(arm, 35.0, 155.0, true, 0.1).withTimeout(1), //Score High
           new InstantCommand(() -> arm.GrabGp(false))//,
           // new WaitCommand(0.1)

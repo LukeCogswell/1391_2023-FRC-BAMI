@@ -77,6 +77,31 @@ public class ArmToAngles extends CommandBase {
       if (Math.abs(m_arm.getElbowAngle()) > 155 && Math.abs(targetElbowAngle) > 155) {
         elbowSpeedMultiplier = 0.6;
       }
+
+    } else if (targetShoulderAngle == 8.0) {
+      shoulderSpeedMultiplier = 0.5;
+      if (m_arm.getShoulderAngle() > 5) shoulderSpeedMultiplier = 0.3;
+      if (Math.abs(m_arm.getElbowAngle()) > 75 && Math.abs(targetElbowAngle) > 75) {
+        elbowSpeedMultiplier = 0.9;
+      }
+      if (Math.abs(m_arm.getElbowAngle()) > 80 && Math.abs(targetElbowAngle) > 80) {
+        elbowSpeedMultiplier = 0.8;
+      }
+      if (Math.abs(m_arm.getElbowAngle()) > 85 && Math.abs(targetElbowAngle) > 85) {
+        elbowSpeedMultiplier = 0.6;
+      }
+    } else if (targetShoulderAngle == -27.77 && targetElbowAngle ==  -28.5) {
+      shoulderSpeedMultiplier = 0.5;
+      if (m_arm.getShoulderAngle() < -17) shoulderSpeedMultiplier = 0.3;
+      if (m_arm.getElbowAngle() < -15 && targetElbowAngle < -15) {
+        elbowSpeedMultiplier = 0.9;
+      }
+      if (m_arm.getElbowAngle() < -20 && targetElbowAngle < -20) {
+        elbowSpeedMultiplier = 0.8;
+      }
+      if (m_arm.getElbowAngle() < -25 && targetElbowAngle < -25) {
+        elbowSpeedMultiplier = 0.6;
+      }
     } else if (Math.abs(targetElbowAngle) > 30) {
       // if (Math.abs(m_arm.getShoulderAngle()) > Math.abs(targetShoulderAngle) * 0.95) shoulderSpeedMultiplier = 0.5;
       // if (Math.abs(m_arm.getShoulderAngle()) > Math.abs(targetShoulderAngle) * 0.9) shoulderSpeedMultiplier = 0.3;
