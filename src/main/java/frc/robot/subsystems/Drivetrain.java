@@ -41,6 +41,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveModule m_backLeft;
   private SwerveModule m_backRight;
   NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTable limelightTwoTable = NetworkTableInstance.getDefault().getTable("limelight-two");
 
   private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       new Translation2d(kModuleXOffsetMeters, kModuleYOffsetMeters),
@@ -73,6 +74,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     teamColor = DriverStation.getAlliance();
     botPoseSub = limelightTable.getDoubleArrayTopic("botpose").subscribe(new double[]{});
+    botPoseSub = limelightTwoTable.getDoubleArrayTopic("botpose").subscribe(new double[]{});
     tagPoseSub = limelightTable.getDoubleArrayTopic("targetpose_robotspace").subscribe(new double[]{});
 
     m_frontLeft = new SwerveModule(
@@ -254,6 +256,8 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("Pose1", getRobotPoseFromAprilTag().toString());
+    SmartDashboard.putString("Pose2", getAlternateRobotPoseFromAprilTag().toString());
     updateOdometry();
     // SmartDashboard.putNumber("TA", getTA()); 
     // SmartDashboard.putNumber("TX", getTX());
@@ -309,6 +313,13 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getRobotPoseFromAprilTag() {
       var entry = limelightTable.getEntry("botpose").getDoubleArray(new double[]{getFieldPosition().getX(), getFieldPosition().getY()});
+      var pose2d = new Pose2d(new Translation2d(entry[0], entry[1]), odometer.getPoseMeters().getRotation());
+  
+      return pose2d;
+  }
+
+  public Pose2d getAlternateRobotPoseFromAprilTag() {
+      var entry = limelightTwoTable.getEntry("botpose").getDoubleArray(new double[]{getFieldPosition().getX(), getFieldPosition().getY()});
       var pose2d = new Pose2d(new Translation2d(entry[0], entry[1]), odometer.getPoseMeters().getRotation());
   
       return pose2d;
